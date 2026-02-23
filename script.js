@@ -37,7 +37,7 @@ function downloadLoader() {
     const fileName = 'DirmaLoader.exe';
     
     // Показываем уведомление
-    showNotification('Скачивание начато!', 'success');
+    showNotification('Download started!', 'success');
     
     // Создаём временную ссылку для скачивания
     const link = document.createElement('a');
@@ -52,7 +52,7 @@ function downloadLoader() {
     
     // Показываем инструкцию
     setTimeout(() => {
-        showNotification('Не забудьте установить Java 25!', 'info');
+        showNotification('Don\'t forget to install Java 25!', 'info');
     }, 2000);
 }
 
@@ -236,3 +236,414 @@ if (statValue && statValue.textContent.includes('10K+')) {
 
 console.log('%cDirma Client', 'color: #5753de; font-size: 24px; font-weight: bold;');
 console.log('%cСпасибо за использование нашего клиента!', 'color: #8b87ff; font-size: 14px;');
+
+// ==================== КАПЧА ====================
+let captchaAnswer = 0;
+
+function generateCaptcha() {
+    const num1 = Math.floor(Math.random() * 10) + 1;
+    const num2 = Math.floor(Math.random() * 10) + 1;
+    captchaAnswer = num1 + num2;
+    
+    document.getElementById('captcha-question').textContent = `${num1} + ${num2} = ?`;
+}
+
+function checkCaptcha() {
+    const input = document.getElementById('captcha-input');
+    const error = document.getElementById('captcha-error');
+    const userAnswer = parseInt(input.value);
+    
+    if (isNaN(userAnswer)) {
+        error.textContent = 'Please enter a number';
+        input.style.borderColor = '#ff6b6b';
+        return;
+    }
+    
+    if (userAnswer === captchaAnswer) {
+        // Правильный ответ
+        const overlay = document.getElementById('captcha-overlay');
+        overlay.style.animation = 'fadeOut 0.3s ease';
+        setTimeout(() => {
+            overlay.classList.add('hidden');
+            // Сохраняем в localStorage что капча пройдена
+            localStorage.setItem('captcha_passed', 'true');
+            localStorage.setItem('captcha_time', Date.now().toString());
+        }, 300);
+    } else {
+        // Неправильный ответ
+        error.textContent = 'Wrong answer. Try again.';
+        input.style.borderColor = '#ff6b6b';
+        input.value = '';
+        
+        // Генерируем новый пример
+        setTimeout(() => {
+            generateCaptcha();
+            error.textContent = '';
+            input.style.borderColor = 'rgba(87, 83, 222, 0.3)';
+        }, 1500);
+    }
+}
+
+// Проверка при загрузке страницы
+window.addEventListener('load', () => {
+    const captchaPassed = localStorage.getItem('captcha_passed');
+    const captchaTime = localStorage.getItem('captcha_time');
+    const overlay = document.getElementById('captcha-overlay');
+    
+    // Капча действительна 24 часа
+    const validTime = 24 * 60 * 60 * 1000;
+    const now = Date.now();
+    
+    if (captchaPassed === 'true' && captchaTime && (now - parseInt(captchaTime)) < validTime) {
+        // Капча уже пройдена и еще действительна
+        overlay.classList.add('hidden');
+    } else {
+        // Показываем капчу
+        generateCaptcha();
+        
+        // Обработка Enter
+        document.getElementById('captcha-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                checkCaptcha();
+            }
+        });
+    }
+});
+
+// Добавляем анимацию fadeOut
+const fadeOutStyle = document.createElement('style');
+fadeOutStyle.textContent = `
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+`;
+document.head.appendChild(fadeOutStyle);
+
+// ==================== СИСТЕМА АККАУНТОВ ====================
+// Обфусцированные данные - многоуровневое шифрование
+const _0x5f2a = [0x68,0x74,0x74,0x70,0x73,0x3a,0x2f,0x2f,0x61,0x70,0x69,0x2e,0x6e,0x70,0x6f,0x69,0x6e,0x74,0x2e,0x69,0x6f,0x2f,0x38,0x62,0x63,0x65,0x31,0x64,0x36,0x66,0x30,0x65,0x36,0x38,0x32,0x32,0x32,0x33,0x37,0x38,0x34,0x35];
+const _0x3b8c = [0x44,0x69,0x72,0x6d,0x61,0x32,0x30,0x32,0x36];
+const _0x7d4e = ['users','keys','username','password','sub','hwid'];
+
+// Декодирование URL с XOR
+function _0xurl() {
+    let result = '';
+    const key = _0x3b8c;
+    for (let i = 0; i < _0x5f2a.length; i++) {
+        result += String.fromCharCode(_0x5f2a[i] ^ key[i % key.length]);
+    }
+    return result;
+}
+
+// Получение имени поля
+function _0xf(index) {
+    return _0x7d4e[index];
+}
+
+const API_URL = _0xurl();
+let currentUser = null;
+
+// Загрузка данных с API
+async function fetchAPI() {
+    try {
+        const response = await fetch(API_URL);
+        return await response.json();
+    } catch (error) {
+        console.error('API Error:', error);
+        return null;
+    }
+}
+
+// Сохранение данных на API
+async function saveAPI(data) {
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        return response.ok;
+    } catch (error) {
+        console.error('API Save Error:', error);
+        return false;
+    }
+}
+
+// Вход
+async function login() {
+    const username = document.getElementById('login-username').value.trim();
+    const password = document.getElementById('login-password').value;
+    const error = document.getElementById('login-error');
+    
+    if (!username || !password) {
+        error.textContent = 'Fill in all fields';
+        return;
+    }
+    
+    error.textContent = 'Checking...';
+    const data = await fetchAPI();
+    
+    if (!data) {
+        error.textContent = 'Server connection error';
+        return;
+    }
+    
+    const user = data[_0xf(0)].find(u => u[_0xf(2)] === username && u[_0xf(3)] === password);
+    
+    if (!user) {
+        error.textContent = 'Invalid username or password';
+        return;
+    }
+    
+    // Успешный вход
+    currentUser = user;
+    localStorage.setItem('dirma_user', JSON.stringify(user));
+    
+    showAccountPanel();
+    updateAccountButton();
+    error.textContent = '';
+}
+
+// Регистрация
+async function register() {
+    const username = document.getElementById('register-username').value.trim();
+    const password = document.getElementById('register-password').value;
+    const password2 = document.getElementById('register-password2').value;
+    const error = document.getElementById('register-error');
+    
+    if (!username || !password || !password2) {
+        error.textContent = 'Fill in all fields';
+        return;
+    }
+    
+    if (password !== password2) {
+        error.textContent = 'Passwords do not match';
+        return;
+    }
+    
+    if (username.length < 3) {
+        error.textContent = 'Username must be at least 3 characters';
+        return;
+    }
+    
+    if (password.length < 6) {
+        error.textContent = 'Password must be at least 6 characters';
+        return;
+    }
+    
+    error.textContent = 'Registering...';
+    const data = await fetchAPI();
+    
+    if (!data) {
+        error.textContent = 'Server connection error';
+        return;
+    }
+    
+    // Проверка существования пользователя
+    if (data[_0xf(0)].find(u => u[_0xf(2)] === username)) {
+        error.textContent = 'User with this name already exists';
+        return;
+    }
+    
+    // Создание нового пользователя
+    const newUser = {
+        [_0xf(2)]: username,
+        [_0xf(3)]: password,
+        [_0xf(5)]: '',
+        [_0xf(4)]: 'Expired'
+    };
+    
+    data[_0xf(0)].push(newUser);
+    
+    const saved = await saveAPI(data);
+    
+    if (!saved) {
+        error.textContent = 'Data save error';
+        return;
+    }
+    
+    // Автоматический вход
+    currentUser = newUser;
+    localStorage.setItem('dirma_user', JSON.stringify(newUser));
+    
+    showAccountPanel();
+    updateAccountButton();
+    error.textContent = '';
+}
+
+// Активация ключа
+async function activateKey() {
+    const key = document.getElementById('activate-key').value.trim().toUpperCase();
+    const error = document.getElementById('activate-error');
+    
+    if (!key) {
+        error.textContent = 'Enter key';
+        return;
+    }
+    
+    if (!currentUser) {
+        error.textContent = 'Sign in to your account';
+        return;
+    }
+    
+    error.textContent = 'Checking key...';
+    const data = await fetchAPI();
+    
+    if (!data) {
+        error.textContent = 'Server connection error';
+        return;
+    }
+    
+    // Проверка существования ключа
+    const keyIndex = data[_0xf(1)].indexOf(key);
+    
+    if (keyIndex === -1) {
+        error.textContent = 'Invalid key';
+        return;
+    }
+    
+    // Удаление ключа из списка
+    data[_0xf(1)].splice(keyIndex, 1);
+    
+    // Активация подписки
+    const userIndex = data[_0xf(0)].findIndex(u => u[_0xf(2)] === currentUser[_0xf(2)]);
+    if (userIndex !== -1) {
+        data[_0xf(0)][userIndex][_0xf(4)] = 'Active';
+        currentUser[_0xf(4)] = 'Active';
+    }
+    
+    const saved = await saveAPI(data);
+    
+    if (!saved) {
+        error.textContent = 'Data save error';
+        return;
+    }
+    
+    localStorage.setItem('dirma_user', JSON.stringify(currentUser));
+    
+    // Показываем успех
+    error.style.color = '#4CAF50';
+    error.textContent = 'Key successfully activated!';
+    
+    setTimeout(() => {
+        showAccountPanel();
+        error.style.color = '#ff6b6b';
+        error.textContent = '';
+    }, 2000);
+}
+
+// Выход
+function logout() {
+    currentUser = null;
+    localStorage.removeItem('dirma_user');
+    updateAccountButton();
+    closeAuth();
+}
+
+// Показать форму входа
+function showLogin() {
+    document.getElementById('login-form').classList.remove('hidden');
+    document.getElementById('register-form').classList.add('hidden');
+    document.getElementById('activate-form').classList.add('hidden');
+    document.getElementById('account-panel').classList.add('hidden');
+}
+
+// Показать форму регистрации
+function showRegister() {
+    document.getElementById('login-form').classList.add('hidden');
+    document.getElementById('register-form').classList.remove('hidden');
+    document.getElementById('activate-form').classList.add('hidden');
+    document.getElementById('account-panel').classList.add('hidden');
+}
+
+// Показать форму активации
+function showActivateForm() {
+    document.getElementById('login-form').classList.add('hidden');
+    document.getElementById('register-form').classList.add('hidden');
+    document.getElementById('activate-form').classList.remove('hidden');
+    document.getElementById('account-panel').classList.add('hidden');
+}
+
+// Показать панель аккаунта
+function showAccountPanel() {
+    if (!currentUser) {
+        showLogin();
+        return;
+    }
+    
+    document.getElementById('login-form').classList.add('hidden');
+    document.getElementById('register-form').classList.add('hidden');
+    document.getElementById('activate-form').classList.add('hidden');
+    document.getElementById('account-panel').classList.remove('hidden');
+    
+    document.getElementById('account-username').textContent = currentUser[_0xf(2)];
+    const statusEl = document.getElementById('account-status');
+    statusEl.textContent = `Subscription: ${currentUser[_0xf(4)]}`;
+    statusEl.className = 'account-status ' + (currentUser[_0xf(4)] === 'Active' ? 'active' : 'expired');
+}
+
+// Открыть окно авторизации
+function openAuth() {
+    document.getElementById('auth-overlay').classList.remove('hidden');
+    if (currentUser) {
+        showAccountPanel();
+    } else {
+        showLogin();
+    }
+}
+
+// Закрыть окно авторизации
+function closeAuth() {
+    document.getElementById('auth-overlay').classList.add('hidden');
+}
+
+// Обновить кнопку аккаунта
+function updateAccountButton() {
+    const button = document.getElementById('account-button');
+    const text = document.getElementById('account-button-text');
+    
+    if (currentUser) {
+        text.textContent = currentUser[_0xf(2)];
+        button.style.background = currentUser[_0xf(4)] === 'Active' 
+            ? 'linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%)'
+            : 'linear-gradient(135deg, #ff6b6b 0%, #ff8787 100%)';
+    } else {
+        text.textContent = 'Login';
+        button.style.background = 'var(--gradient-1)';
+    }
+}
+
+// Проверка авторизации при загрузке
+window.addEventListener('load', () => {
+    // Показываем кнопку аккаунта после прохождения капчи
+    setTimeout(() => {
+        document.getElementById('account-button').classList.remove('hidden');
+    }, 500);
+    
+    // Проверяем сохраненного пользователя
+    const savedUser = localStorage.getItem('dirma_user');
+    if (savedUser) {
+        try {
+            currentUser = JSON.parse(savedUser);
+            updateAccountButton();
+        } catch (e) {
+            localStorage.removeItem('dirma_user');
+        }
+    }
+});
+
+// Обработка Enter в формах
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('login-password')?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') login();
+    });
+    
+    document.getElementById('register-password2')?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') register();
+    });
+    
+    document.getElementById('activate-key')?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') activateKey();
+    });
+});
