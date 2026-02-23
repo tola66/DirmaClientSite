@@ -658,3 +658,22 @@ function closeMobileMenu() {
     navLinks.classList.remove('active');
     toggle.classList.remove('active');
 }
+
+// ==================== VPN DOWNLOAD ====================
+function downloadVPN() {
+    const vpnUrl = './DirmaVPN.exe';
+    const fileName = 'DirmaVPN.exe';
+    
+    showNotification('VPN download started!', 'success');
+    
+    const link = document.createElement('a');
+    link.href = vpnUrl;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    setTimeout(() => {
+        showNotification('Run DirmaVPN.exe to start protection', 'info');
+    }, 2000);
+}
