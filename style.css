@@ -97,6 +97,12 @@ body {
     font-weight: bold;
 }
 
+.logo-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+}
+
 .logo-icon {
     width: 40px;
     height: 40px;
@@ -613,5 +619,338 @@ section {
     
     .section-title {
         font-size: 36px;
+    }
+}
+
+/* Капча */
+.captcha-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 17, 26, 0.98);
+    backdrop-filter: blur(10px);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.captcha-overlay.hidden {
+    display: none;
+}
+
+.captcha-modal {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 50px;
+    max-width: 500px;
+    width: 90%;
+    border: 1px solid rgba(87, 83, 222, 0.3);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    animation: slideUp 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.captcha-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.captcha-header .captcha-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.captcha-header h2 {
+    font-size: 28px;
+    margin-bottom: 10px;
+    background: var(--gradient-1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.captcha-header p {
+    color: var(--text-secondary);
+    font-size: 16px;
+}
+
+.captcha-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.captcha-question {
+    background: rgba(87, 83, 222, 0.1);
+    border: 2px solid var(--primary-color);
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    font-size: 32px;
+    font-weight: bold;
+    color: var(--text-primary);
+}
+
+.captcha-input {
+    background: var(--dark-bg);
+    border: 2px solid rgba(87, 83, 222, 0.3);
+    border-radius: 12px;
+    padding: 15px 20px;
+    font-size: 18px;
+    color: var(--text-primary);
+    text-align: center;
+    transition: all 0.3s;
+}
+
+.captcha-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(87, 83, 222, 0.2);
+}
+
+.captcha-submit {
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+}
+
+.captcha-error {
+    color: #ff6b6b;
+    text-align: center;
+    font-size: 14px;
+    min-height: 20px;
+}
+
+/* Система аккаунтов */
+.auth-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 17, 26, 0.95);
+    backdrop-filter: blur(10px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.auth-overlay.hidden {
+    display: none;
+}
+
+.auth-modal {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 50px;
+    max-width: 450px;
+    width: 90%;
+    border: 1px solid rgba(87, 83, 222, 0.3);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    animation: slideUp 0.4s ease;
+    position: relative;
+}
+
+.auth-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 32px;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+
+.auth-close:hover {
+    background: rgba(255, 107, 107, 0.1);
+    color: #ff6b6b;
+}
+
+.auth-form {
+    display: block;
+}
+
+.auth-form.hidden {
+    display: none;
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.auth-header .auth-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.auth-header h2 {
+    font-size: 28px;
+    margin-bottom: 10px;
+    background: var(--gradient-1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.auth-header p {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.auth-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.auth-input {
+    background: var(--dark-bg);
+    border: 2px solid rgba(87, 83, 222, 0.3);
+    border-radius: 12px;
+    padding: 15px 20px;
+    font-size: 16px;
+    color: var(--text-primary);
+    transition: all 0.3s;
+}
+
+.auth-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(87, 83, 222, 0.2);
+}
+
+.auth-submit {
+    width: 100%;
+    padding: 15px;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+.auth-error {
+    color: #ff6b6b;
+    text-align: center;
+    font-size: 14px;
+    min-height: 20px;
+}
+
+.auth-switch {
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.auth-switch a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s;
+}
+
+.auth-switch a:hover {
+    color: var(--accent-color);
+}
+
+.account-status {
+    padding: 8px 16px;
+    border-radius: 20px;
+    display: inline-block;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.account-status.active {
+    background: rgba(76, 175, 80, 0.2);
+    color: #4CAF50;
+}
+
+.account-status.expired {
+    background: rgba(255, 107, 107, 0.2);
+    color: #ff6b6b;
+}
+
+/* Кнопка аккаунта */
+.account-button {
+    position: fixed;
+    top: 100px;
+    right: 30px;
+    background: var(--gradient-1);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    box-shadow: 0 5px 20px rgba(87, 83, 222, 0.3);
+    transition: all 0.3s;
+    z-index: 1001;
+}
+
+.account-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(87, 83, 222, 0.4);
+}
+
+.account-button.hidden {
+    display: none;
+}
+
+.account-icon {
+    font-size: 18px;
+}
+
+@media (max-width: 768px) {
+    .auth-modal {
+        padding: 30px;
+    }
+    
+    .account-button {
+        top: 80px;
+        right: 20px;
+        padding: 10px 20px;
+        font-size: 12px;
     }
 }
