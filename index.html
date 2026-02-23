@@ -1,29 +1,161 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dirma Client - Скачать лоадер</title>
+    <title>Dirma Client - Download Loader</title>
+    <link rel="icon" type="image/png" href="Dirma.png">
+    <link rel="shortcut icon" type="image/png" href="Dirma.png">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Captcha -->
+    <div id="captcha-overlay" class="captcha-overlay">
+        <div class="captcha-modal">
+            <div class="captcha-header">
+                <div class="captcha-logo">
+                    <span class="logo-icon">D</span>
+                    <span class="logo-text">Dirma Client</span>
+                </div>
+                <h2>Security Check</h2>
+                <p>Solve the example to continue</p>
+            </div>
+            <div class="captcha-content">
+                <div class="captcha-question" id="captcha-question">5 + 3 = ?</div>
+                <input type="number" id="captcha-input" class="captcha-input" placeholder="Enter answer" autocomplete="off">
+                <button class="btn btn-primary captcha-submit" onclick="checkCaptcha()">
+                    <span class="btn-icon">✓</span>
+                    Check
+                </button>
+                <div id="captcha-error" class="captcha-error"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Account System -->
+    <div id="auth-overlay" class="auth-overlay hidden">
+        <div class="auth-modal">
+            <button class="auth-close" onclick="closeAuth()">×</button>
+            
+            <!-- Login -->
+            <div id="login-form" class="auth-form">
+                <div class="auth-header">
+                    <div class="auth-logo">
+                        <span class="logo-icon">D</span>
+                        <span class="logo-text">Dirma Client</span>
+                    </div>
+                    <h2>Login</h2>
+                    <p>Sign in to download the client</p>
+                </div>
+                <div class="auth-content">
+                    <input type="text" id="login-username" class="auth-input" placeholder="Username">
+                    <input type="password" id="login-password" class="auth-input" placeholder="Password">
+                    <button class="btn btn-primary auth-submit" onclick="login()">
+                        <span class="btn-icon">→</span>
+                        Sign In
+                    </button>
+                    <div id="login-error" class="auth-error"></div>
+                    <div class="auth-switch">
+                        No account? <a href="#" onclick="showRegister(); return false;">Register</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Register -->
+            <div id="register-form" class="auth-form hidden">
+                <div class="auth-header">
+                    <div class="auth-logo">
+                        <span class="logo-icon">D</span>
+                        <span class="logo-text">Dirma Client</span>
+                    </div>
+                    <h2>Register</h2>
+                    <p>Create an account for access</p>
+                </div>
+                <div class="auth-content">
+                    <input type="text" id="register-username" class="auth-input" placeholder="Username">
+                    <input type="password" id="register-password" class="auth-input" placeholder="Password">
+                    <input type="password" id="register-password2" class="auth-input" placeholder="Confirm Password">
+                    <button class="btn btn-primary auth-submit" onclick="register()">
+                        <span class="btn-icon">✓</span>
+                        Register
+                    </button>
+                    <div id="register-error" class="auth-error"></div>
+                    <div class="auth-switch">
+                        Already have an account? <a href="#" onclick="showLogin(); return false;">Sign In</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activate Key -->
+            <div id="activate-form" class="auth-form hidden">
+                <div class="auth-header">
+                    <div class="auth-logo">
+                        <span class="logo-icon">D</span>
+                        <span class="logo-text">Dirma Client</span>
+                    </div>
+                    <h2>Activate Key</h2>
+                    <p>Enter key to activate subscription</p>
+                </div>
+                <div class="auth-content">
+                    <input type="text" id="activate-key" class="auth-input" placeholder="KEY-XXXX-XXXX" style="text-transform: uppercase;">
+                    <button class="btn btn-primary auth-submit" onclick="activateKey()">
+                        <span class="btn-icon">🔑</span>
+                        Activate
+                    </button>
+                    <div id="activate-error" class="auth-error"></div>
+                    <div class="auth-switch">
+                        <a href="#" onclick="showAccountPanel(); return false;">← Back to Account</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Panel -->
+            <div id="account-panel" class="auth-form hidden">
+                <div class="auth-header">
+                    <div class="auth-logo">
+                        <span class="logo-icon">D</span>
+                        <span class="logo-text">Dirma Client</span>
+                    </div>
+                    <h2 id="account-username">Username</h2>
+                    <p id="account-status" class="account-status">Subscription: Active</p>
+                </div>
+                <div class="auth-content">
+                    <button class="btn btn-primary auth-submit" onclick="showActivateForm()">
+                        <span class="btn-icon">🔑</span>
+                        Activate Key
+                    </button>
+                    <button class="btn btn-secondary auth-submit" onclick="logout()">
+                        <span class="btn-icon">←</span>
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Account Button -->
+    <div id="account-button" class="account-button hidden" onclick="openAuth()">
+        <span class="account-icon">👤</span>
+        <span id="account-button-text">Login</span>
+    </div>
+
     <!-- Фоновая анимация -->
     <div class="background">
         <div class="stars"></div>
         <div class="gradient-overlay"></div>
     </div>
 
-    <!-- Навигация -->
+    <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
             <div class="logo">
-                <span class="logo-icon">D</span>
+                <img src="Dirma.png" alt="Dirma" class="logo-image">
                 <span class="logo-text">Dirma Client</span>
             </div>
             <ul class="nav-links">
-                <li><a href="#home">Главная</a></li>
-                <li><a href="#features">Возможности</a></li>
-                <li><a href="#download">Скачать</a></li>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#download">Download</a></li>
                 <li><a href="#faq">FAQ</a></li>
             </ul>
         </div>
@@ -36,146 +168,146 @@
                 <h1 class="hero-title">
                     <span class="gradient-text">Dirma Client</span>
                 </h1>
-                <p class="hero-subtitle">Мощный клиент для Minecraft 1.16.5</p>
+                <p class="hero-subtitle">Powerful client for Minecraft 1.16.5</p>
                 <p class="hero-description">
-                    Современный интерфейс, продвинутые функции и максимальная производительность
+                    Modern interface, advanced features and maximum performance
                 </p>
                 <div class="hero-buttons">
                     <a href="https://funpay.com/lots/offer?id=64680510" class="btn btn-primary" target="_blank">
                         <span class="btn-icon">💳</span>
-                        Купить через FunPay
+                        Buy via FunPay
                     </a>
                     <a href="#download" class="btn btn-secondary">
                         <span class="btn-icon">⬇</span>
-                        Скачать лоадер
+                        Download Loader
                     </a>
                 </div>
                 <div class="hero-stats">
                     <div class="stat">
                         <div class="stat-value">10K+</div>
-                        <div class="stat-label">Пользователей</div>
+                        <div class="stat-label">Users</div>
                     </div>
                     <div class="stat">
                         <div class="stat-value">100+</div>
-                        <div class="stat-label">Функций</div>
+                        <div class="stat-label">Features</div>
                     </div>
                     <div class="stat">
                         <div class="stat-value">24/7</div>
-                        <div class="stat-label">Поддержка</div>
+                        <div class="stat-label">Support</div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Возможности -->
+    <!-- Features -->
     <section id="features" class="features">
         <div class="container">
-            <h2 class="section-title">Возможности</h2>
+            <h2 class="section-title">Features</h2>
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon">⚡</div>
-                    <h3>Высокая производительность</h3>
-                    <p>Оптимизированный код для максимальной скорости работы</p>
+                    <h3>High Performance</h3>
+                    <p>Optimized code for maximum speed</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">🎨</div>
-                    <h3>Современный UI</h3>
-                    <p>Красивый интерфейс с поддержкой тем и настройкой</p>
+                    <h3>Modern UI</h3>
+                    <p>Beautiful interface with theme support</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">🛡️</div>
-                    <h3>Безопасность</h3>
-                    <p>Защита от обнаружения и безопасное использование</p>
+                    <h3>Security</h3>
+                    <p>Protection from detection and safe usage</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">🔧</div>
-                    <h3>Гибкие настройки</h3>
-                    <p>Настройка каждой функции под ваши нужды</p>
+                    <h3>Flexible Settings</h3>
+                    <p>Customize each feature to your needs</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">🌐</div>
-                    <h3>Мультиязычность</h3>
-                    <p>Поддержка русского и английского языков</p>
+                    <h3>Multilingual</h3>
+                    <p>Support for Russian and English</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">🔄</div>
-                    <h3>Регулярные обновления</h3>
-                    <p>Постоянное добавление новых функций</p>
+                    <h3>Regular Updates</h3>
+                    <p>Constant addition of new features</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Скачивание -->
+    <!-- Download -->
     <section id="download" class="download">
         <div class="container">
-            <h2 class="section-title">Скачать лоадер</h2>
+            <h2 class="section-title">Download Loader</h2>
             <div class="download-card">
                 <div class="download-info">
                     <h3>Dirma Loader</h3>
                     <div class="version-info">
                         <span class="version-badge">v1.0.0</span>
-                        <span class="version-date">Обновлено: 23.02.2026</span>
+                        <span class="version-date">Updated: 23.02.2026</span>
                     </div>
                     <ul class="download-features">
-                        <li>✓ Поддержка Minecraft 1.16.5</li>
-                        <li>✓ Автоматическая установка</li>
-                        <li>✓ Встроенная система обновлений</li>
-                        <li>✓ Простая настройка</li>
-                        <li>✓ Требуется Java 25+</li>
+                        <li>✓ Minecraft 1.16.5 Support</li>
+                        <li>✓ Automatic Installation</li>
+                        <li>✓ Built-in Update System</li>
+                        <li>✓ Easy Setup</li>
+                        <li>✓ Requires Java 25+</li>
                     </ul>
                 </div>
                 <div class="download-action">
                     <a href="https://funpay.com/lots/offer?id=64680510" class="btn btn-download btn-buy" target="_blank">
                         <span class="btn-icon">💳</span>
-                        Купить через FunPay
+                        Buy via FunPay
                     </a>
                     <button class="btn btn-download" onclick="downloadLoader()">
                         <span class="btn-icon">⬇</span>
-                        Скачать лоадер
+                        Download Loader
                     </button>
-                    <p class="download-size">Размер: ~5 MB</p>
+                    <p class="download-size">Size: ~5 MB</p>
                     <div class="java-requirement">
-                        <p class="java-text">Требуется Java 25 или выше</p>
+                        <p class="java-text">Requires Java 25 or higher</p>
                         <a href="https://download.oracle.com/java/25/latest/jdk-25_windows-x64_bin.exe" class="java-download-link" target="_blank">
                             <span class="java-icon">☕</span>
-                            Скачать JDK 25
+                            Download JDK 25
                         </a>
                     </div>
                 </div>
             </div>
 
-            <!-- Инструкция по установке -->
+            <!-- Installation Guide -->
             <div class="installation-guide">
-                <h3>Инструкция по установке</h3>
+                <h3>Installation Guide</h3>
                 <div class="steps">
                     <div class="step">
                         <div class="step-number">1</div>
                         <div class="step-content">
-                            <h4>Установите Java 25</h4>
-                            <p>Скачайте и установите JDK 25 с официального сайта Oracle</p>
+                            <h4>Install Java 25</h4>
+                            <p>Download and install JDK 25 from Oracle official website</p>
                         </div>
                     </div>
                     <div class="step">
                         <div class="step-number">2</div>
                         <div class="step-content">
-                            <h4>Скачайте лоадер</h4>
-                            <p>Нажмите кнопку "Скачать лоадер" выше</p>
+                            <h4>Download Loader</h4>
+                            <p>Click "Download Loader" button above</p>
                         </div>
                     </div>
                     <div class="step">
                         <div class="step-number">3</div>
                         <div class="step-content">
-                            <h4>Запустите установщик</h4>
-                            <p>Откройте скачанный файл DirmaLoader.exe</p>
+                            <h4>Run Installer</h4>
+                            <p>Open downloaded DirmaLoader.exe file</p>
                         </div>
                     </div>
                     <div class="step">
                         <div class="step-number">4</div>
                         <div class="step-content">
-                            <h4>Следуйте инструкциям</h4>
-                            <p>Лоадер автоматически установит клиент</p>
+                            <h4>Follow Instructions</h4>
+                            <p>Loader will automatically install the client</p>
                         </div>
                     </div>
                 </div>
@@ -186,77 +318,77 @@
     <!-- FAQ -->
     <section id="faq" class="faq">
         <div class="container">
-            <h2 class="section-title">Часто задаваемые вопросы</h2>
+            <h2 class="section-title">Frequently Asked Questions</h2>
             <div class="faq-list">
                 <div class="faq-item">
                     <div class="faq-question">
-                        <h4>Нужна ли Java для работы клиента?</h4>
+                        <h4>Is Java required for the client?</h4>
                         <span class="faq-toggle">+</span>
                     </div>
                     <div class="faq-answer">
-                        <p>Да, для работы лоадера требуется Java 25 или выше. Вы можете скачать её по ссылке выше или с официального сайта Oracle.</p>
+                        <p>Yes, the loader requires Java 25 or higher. You can download it from the link above or from Oracle's official website.</p>
                     </div>
                 </div>
                 <div class="faq-item">
                     <div class="faq-question">
-                        <h4>Безопасно ли использовать Dirma Client?</h4>
+                        <h4>Is Dirma Client safe to use?</h4>
                         <span class="faq-toggle">+</span>
                     </div>
                     <div class="faq-answer">
-                        <p>Да, Dirma Client полностью безопасен. Мы используем современные методы защиты и не собираем личные данные пользователей.</p>
+                        <p>Yes, Dirma Client is completely safe. We use modern protection methods and do not collect users' personal data.</p>
                     </div>
                 </div>
                 <div class="faq-item">
                     <div class="faq-question">
-                        <h4>Какие версии Minecraft поддерживаются?</h4>
+                        <h4>Which Minecraft versions are supported?</h4>
                         <span class="faq-toggle">+</span>
                     </div>
                     <div class="faq-answer">
-                        <p>В данный момент поддерживается Minecraft 1.16.5. Поддержка других версий планируется в будущих обновлениях.</p>
+                        <p>Currently supports Minecraft 1.16.5. Support for other versions is planned in future updates.</p>
                     </div>
                 </div>
                 <div class="faq-item">
                     <div class="faq-question">
-                        <h4>Как обновить клиент?</h4>
+                        <h4>How to update the client?</h4>
                         <span class="faq-toggle">+</span>
                     </div>
                     <div class="faq-answer">
-                        <p>Лоадер автоматически проверяет наличие обновлений при запуске. Вы также можете проверить обновления вручную в настройках.</p>
+                        <p>The loader automatically checks for updates on startup. You can also check for updates manually in settings.</p>
                     </div>
                 </div>
                 <div class="faq-item">
                     <div class="faq-question">
-                        <h4>Где получить поддержку?</h4>
+                        <h4>Where to get support?</h4>
                         <span class="faq-toggle">+</span>
                     </div>
                     <div class="faq-answer">
-                        <p>Вы можете обратиться в наш Discord сервер или написать на email: support@dirmaclient.com</p>
+                        <p>You can contact our Discord server or email: support@dirmaclient.com</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Футер -->
+    <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
                     <h4>Dirma Client</h4>
-                    <p>Современный клиент для Minecraft</p>
+                    <p>Modern client for Minecraft</p>
                 </div>
                 <div class="footer-section">
-                    <h4>Ссылки</h4>
+                    <h4>Links</h4>
                     <ul>
-                        <li><a href="#home">Главная</a></li>
-                        <li><a href="#features">Возможности</a></li>
-                        <li><a href="https://funpay.com/lots/offer?id=64680510" target="_blank">Купить</a></li>
-                        <li><a href="#download">Скачать</a></li>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="https://funpay.com/lots/offer?id=64680510" target="_blank">Buy</a></li>
+                        <li><a href="#download">Download</a></li>
                         <li><a href="#faq">FAQ</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
-                    <h4>Сообщество</h4>
+                    <h4>Community</h4>
                     <ul>
                         <li><a href="https://discord.gg/b7NMFqJZBP" target="_blank">Discord</a></li>
                         <li><a href="https://www.youtube.com/@Darkos1s" target="_blank">YouTube</a></li>
@@ -264,16 +396,16 @@
                     </ul>
                 </div>
                 <div class="footer-section">
-                    <h4>Поддержка</h4>
+                    <h4>Support</h4>
                     <ul>
                         <li><a href="https://discord.gg/b7NMFqJZBP" target="_blank">Discord Support</a></li>
                         <li><a href="#faq">FAQ</a></li>
-                        <li><a href="./INSTALLATION.md" target="_blank">Документация</a></li>
+                        <li><a href="./INSTALLATION.md" target="_blank">Documentation</a></li>
                     </ul>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2026 Dirma Client. Все права защищены.</p>
+                <p>&copy; 2026 Dirma Client. All rights reserved.</p>
             </div>
         </div>
     </footer>
