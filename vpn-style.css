@@ -1,0 +1,385 @@
+/* VPN Page Specific Styles */
+
+.vpn-hero-section {
+    min-height: 100vh;
+}
+
+.vpn-badge-large {
+    display: inline-block;
+    background: linear-gradient(135deg, #f89820 0%, #ff6b6b 100%);
+    color: white;
+    padding: 12px 30px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(248, 152, 32, 0.4);
+    animation: pulse-badge 2s ease-in-out infinite;
+}
+
+@keyframes pulse-badge {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.btn-vpn-hero {
+    background: linear-gradient(135deg, #f89820 0%, #ff6b6b 100%);
+    box-shadow: 0 10px 30px rgba(248, 152, 32, 0.3);
+}
+
+.btn-vpn-hero:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 40px rgba(248, 152, 32, 0.5);
+}
+
+/* VPN Features Section */
+.vpn-features-section {
+    background: var(--gradient-2);
+}
+
+.vpn-feature-card {
+    background: rgba(26, 29, 46, 0.8);
+    backdrop-filter: blur(10px);
+}
+
+.vpn-feature-card:hover {
+    background: rgba(26, 29, 46, 0.95);
+}
+
+/* How It Works */
+.how-it-works {
+    padding: 100px 0;
+    background: var(--dark-bg);
+}
+
+.steps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 40px;
+    margin-top: 60px;
+}
+
+.step-card {
+    background: var(--card-bg);
+    padding: 40px;
+    border-radius: 20px;
+    border: 1px solid rgba(87, 83, 222, 0.2);
+    text-align: center;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.step-card::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: var(--gradient-1);
+    border-radius: 20px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: -1;
+}
+
+.step-card:hover::before {
+    opacity: 1;
+}
+
+.step-card:hover {
+    transform: translateY(-10px);
+    border-color: transparent;
+}
+
+.step-number {
+    width: 80px;
+    height: 80px;
+    background: var(--gradient-1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    font-weight: bold;
+    margin: 0 auto 25px;
+    box-shadow: 0 10px 30px rgba(87, 83, 222, 0.3);
+}
+
+.step-card h3 {
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+.step-card p {
+    color: var(--text-secondary);
+    font-size: 16px;
+}
+
+/* VPN Download Section */
+.vpn-download-section {
+    background: var(--gradient-2);
+}
+
+.vpn-download-main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+}
+
+.vpn-download-info h3 {
+    font-size: 36px;
+    margin-bottom: 20px;
+    background: var(--gradient-1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.vpn-download-desc {
+    font-size: 18px;
+    color: var(--text-secondary);
+    margin-bottom: 30px;
+}
+
+.vpn-features-list {
+    list-style: none;
+    padding: 0;
+}
+
+.vpn-features-list li {
+    padding: 12px 0;
+    font-size: 16px;
+    color: var(--text-secondary);
+    border-bottom: 1px solid rgba(87, 83, 222, 0.1);
+}
+
+.vpn-features-list li:last-child {
+    border-bottom: none;
+}
+
+.vpn-download-box {
+    background: var(--card-bg);
+    padding: 50px;
+    border-radius: 20px;
+    border: 1px solid rgba(87, 83, 222, 0.3);
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.vpn-icon-large {
+    font-size: 80px;
+    margin-bottom: 20px;
+}
+
+.vpn-download-box h4 {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.version-text {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-bottom: 30px;
+}
+
+.btn-download-large {
+    width: 100%;
+    padding: 20px;
+    font-size: 18px;
+    background: linear-gradient(135deg, #f89820 0%, #ff6b6b 100%);
+    margin-bottom: 15px;
+}
+
+.btn-download-large:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 40px rgba(248, 152, 32, 0.4);
+}
+
+.download-requirements {
+    margin-top: 25px;
+    padding-top: 25px;
+    border-top: 1px solid rgba(87, 83, 222, 0.2);
+    text-align: left;
+}
+
+.download-requirements p {
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+}
+
+.download-requirements ul {
+    list-style: none;
+    padding: 0;
+}
+
+.download-requirements li {
+    padding: 5px 0;
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.java-download-link-small {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #f89820 0%, #ff6b6b 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s;
+    margin-top: 15px;
+}
+
+.java-download-link-small:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(248, 152, 32, 0.4);
+}
+
+.java-download-link-small .java-icon {
+    font-size: 18px;
+}
+
+/* Pricing */
+.pricing {
+    padding: 100px 0;
+    background: var(--dark-bg);
+}
+
+.pricing-card {
+    max-width: 500px;
+    margin: 0 auto;
+    background: var(--card-bg);
+    padding: 50px;
+    border-radius: 20px;
+    border: 2px solid rgba(87, 83, 222, 0.3);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.pricing-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: var(--gradient-1);
+}
+
+.pricing-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.pricing-card h3 {
+    font-size: 32px;
+    margin-bottom: 20px;
+}
+
+.pricing-price {
+    margin-bottom: 40px;
+}
+
+.price-amount {
+    font-size: 64px;
+    font-weight: bold;
+    background: var(--gradient-1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.price-period {
+    font-size: 18px;
+    color: var(--text-secondary);
+}
+
+.pricing-features {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 40px;
+    text-align: left;
+}
+
+.pricing-features li {
+    padding: 15px 0;
+    font-size: 16px;
+    color: var(--text-secondary);
+    border-bottom: 1px solid rgba(87, 83, 222, 0.1);
+}
+
+.pricing-features li:last-child {
+    border-bottom: none;
+}
+
+.btn-pricing {
+    width: 100%;
+    padding: 18px;
+    font-size: 18px;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .vpn-download-main {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+    
+    .vpn-download-box {
+        padding: 30px 20px;
+    }
+    
+    .steps-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .pricing-card {
+        padding: 30px 20px;
+    }
+    
+    .price-amount {
+        font-size: 48px;
+    }
+    
+    .vpn-badge-large {
+        font-size: 14px;
+        padding: 10px 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .vpn-download-info h3 {
+        font-size: 28px;
+    }
+    
+    .vpn-icon-large {
+        font-size: 60px;
+    }
+    
+    .vpn-download-box h4 {
+        font-size: 24px;
+    }
+    
+    .step-number {
+        width: 60px;
+        height: 60px;
+        font-size: 28px;
+    }
+    
+    .step-card h3 {
+        font-size: 20px;
+    }
+}
