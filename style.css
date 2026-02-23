@@ -1202,3 +1202,202 @@ section {
         font-size: 12px;
     }
 }
+
+/* Dirma VPN Section */
+.vpn {
+    background: var(--dark-bg);
+    position: relative;
+    overflow: hidden;
+}
+
+.vpn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 300px;
+    background: radial-gradient(ellipse at top, rgba(87, 83, 222, 0.15), transparent);
+    pointer-events: none;
+}
+
+.vpn-hero {
+    text-align: center;
+    margin-bottom: 60px;
+    position: relative;
+    z-index: 1;
+}
+
+.vpn-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #f89820 0%, #ff6b6b 100%);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 15px rgba(248, 152, 32, 0.3);
+}
+
+.vpn-title {
+    font-size: 48px;
+    font-weight: 900;
+    margin-bottom: 20px;
+    background: var(--gradient-1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.vpn-description {
+    font-size: 18px;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.vpn-features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-bottom: 60px;
+}
+
+.vpn-feature {
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: 16px;
+    border: 1px solid rgba(87, 83, 222, 0.2);
+    text-align: center;
+    transition: all 0.3s;
+}
+
+.vpn-feature:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-color);
+    box-shadow: 0 10px 30px rgba(87, 83, 222, 0.2);
+}
+
+.vpn-feature-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+}
+
+.vpn-feature h4 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+}
+
+.vpn-feature p {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.vpn-download-card {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 50px;
+    text-align: center;
+    border: 1px solid rgba(87, 83, 222, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.vpn-download-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(87, 83, 222, 0.1) 0%, transparent 70%);
+    animation: pulse 3s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+.vpn-download-content {
+    position: relative;
+    z-index: 1;
+}
+
+.vpn-download-content h3 {
+    font-size: 32px;
+    margin-bottom: 15px;
+    background: var(--gradient-1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.vpn-download-content p {
+    color: var(--text-secondary);
+    margin-bottom: 30px;
+    font-size: 16px;
+}
+
+.btn-vpn {
+    padding: 18px 40px;
+    font-size: 18px;
+    background: linear-gradient(135deg, #f89820 0%, #ff6b6b 100%);
+    box-shadow: 0 10px 30px rgba(248, 152, 32, 0.3);
+}
+
+.btn-vpn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 40px rgba(248, 152, 32, 0.4);
+}
+
+.vpn-size {
+    margin-top: 15px;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+/* Mobile VPN */
+@media (max-width: 768px) {
+    .vpn-title {
+        font-size: 36px;
+    }
+    
+    .vpn-description {
+        font-size: 16px;
+    }
+    
+    .vpn-features-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .vpn-download-card {
+        padding: 30px 20px;
+    }
+    
+    .vpn-download-content h3 {
+        font-size: 28px;
+    }
+}
+
+@media (max-width: 480px) {
+    .vpn-title {
+        font-size: 28px;
+    }
+    
+    .vpn-badge {
+        font-size: 12px;
+        padding: 6px 16px;
+    }
+    
+    .vpn-download-content h3 {
+        font-size: 24px;
+    }
+    
+    .btn-vpn {
+        padding: 15px 30px;
+        font-size: 16px;
+    }
+}
