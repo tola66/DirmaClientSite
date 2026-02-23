@@ -213,14 +213,7 @@ function detectOS() {
 
 // Обновляем текст кнопки в зависимости от ОС
 window.addEventListener('load', () => {
-    const os = detectOS();
-    const downloadBtn = document.querySelector('.btn-download');
-    if (downloadBtn && os !== 'Unknown') {
-        downloadBtn.innerHTML = `
-            <span class="btn-icon">⬇</span>
-            Скачать для ${os}
-        `;
-    }
+    // Функция отключена - используем стандартный текст кнопки
 });
 
 // Счётчик загрузок (демо)
