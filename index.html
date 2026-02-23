@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dirma Client - Скачать лоадер</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Фоновая анимация -->
+    <div class="background">
+        <div class="stars"></div>
+        <div class="gradient-overlay"></div>
+    </div>
+
+    <!-- Навигация -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <span class="logo-icon">D</span>
+                <span class="logo-text">Dirma Client</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home">Главная</a></li>
+                <li><a href="#features">Возможности</a></li>
+                <li><a href="#download">Скачать</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Главная секция -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span class="gradient-text">Dirma Client</span>
+                </h1>
+                <p class="hero-subtitle">Мощный клиент для Minecraft 1.16.5</p>
+                <p class="hero-description">
+                    Современный интерфейс, продвинутые функции и максимальная производительность
+                </p>
+                <div class="hero-buttons">
+                    <a href="#download" class="btn btn-primary">
+                        <span class="btn-icon">⬇</span>
+                        Скачать лоадер
+                    </a>
+                    <a href="#features" class="btn btn-secondary">
+                        Узнать больше
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <div class="stat-value">10K+</div>
+                        <div class="stat-label">Пользователей</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">100+</div>
+                        <div class="stat-label">Функций</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">24/7</div>
+                        <div class="stat-label">Поддержка</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Возможности -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">Возможности</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Высокая производительность</h3>
+                    <p>Оптимизированный код для максимальной скорости работы</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>Современный UI</h3>
+                    <p>Красивый интерфейс с поддержкой тем и настройкой</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>Безопасность</h3>
+                    <p>Защита от обнаружения и безопасное использование</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔧</div>
+                    <h3>Гибкие настройки</h3>
+                    <p>Настройка каждой функции под ваши нужды</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3>Мультиязычность</h3>
+                    <p>Поддержка русского и английского языков</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3>Регулярные обновления</h3>
+                    <p>Постоянное добавление новых функций</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Скачивание -->
+    <section id="download" class="download">
+        <div class="container">
+            <h2 class="section-title">Скачать лоадер</h2>
+            <div class="download-card">
+                <div class="download-info">
+                    <h3>Dirma Loader</h3>
+                    <div class="version-info">
+                        <span class="version-badge">v1.0.0</span>
+                        <span class="version-date">Обновлено: 23.02.2026</span>
+                    </div>
+                    <ul class="download-features">
+                        <li>✓ Поддержка Minecraft 1.16.5</li>
+                        <li>✓ Автоматическая установка</li>
+                        <li>✓ Встроенная система обновлений</li>
+                        <li>✓ Простая настройка</li>
+                        <li>✓ Требуется Java 25+</li>
+                    </ul>
+                </div>
+                <div class="download-action">
+                    <button class="btn btn-download" onclick="downloadLoader()">
+                        <span class="btn-icon">⬇</span>
+                        Скачать лоадер
+                    </button>
+                    <p class="download-size">Размер: ~5 MB</p>
+                    <div class="java-requirement">
+                        <p class="java-text">Требуется Java 25 или выше</p>
+                        <a href="https://download.oracle.com/java/25/latest/jdk-25_windows-x64_bin.exe" class="java-download-link" target="_blank">
+                            <span class="java-icon">☕</span>
+                            Скачать JDK 25
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Инструкция по установке -->
+            <div class="installation-guide">
+                <h3>Инструкция по установке</h3>
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Установите Java 25</h4>
+                            <p>Скачайте и установите JDK 25 с официального сайта Oracle</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Скачайте лоадер</h4>
+                            <p>Нажмите кнопку "Скачать лоадер" выше</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Запустите установщик</h4>
+                            <p>Откройте скачанный файл DirmaLoader.exe</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h4>Следуйте инструкциям</h4>
+                            <p>Лоадер автоматически установит клиент</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="faq">
+        <div class="container">
+            <h2 class="section-title">Часто задаваемые вопросы</h2>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>Нужна ли Java для работы клиента?</h4>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Да, для работы лоадера требуется Java 25 или выше. Вы можете скачать её по ссылке выше или с официального сайта Oracle.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>Безопасно ли использовать Dirma Client?</h4>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Да, Dirma Client полностью безопасен. Мы используем современные методы защиты и не собираем личные данные пользователей.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>Какие версии Minecraft поддерживаются?</h4>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>В данный момент поддерживается Minecraft 1.16.5. Поддержка других версий планируется в будущих обновлениях.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>Как обновить клиент?</h4>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Лоадер автоматически проверяет наличие обновлений при запуске. Вы также можете проверить обновления вручную в настройках.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>Где получить поддержку?</h4>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Вы можете обратиться в наш Discord сервер или написать на email: support@dirmaclient.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Футер -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Dirma Client</h4>
+                    <p>Современный клиент для Minecraft</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Ссылки</h4>
+                    <ul>
+                        <li><a href="#home">Главная</a></li>
+                        <li><a href="#features">Возможности</a></li>
+                        <li><a href="#download">Скачать</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Сообщество</h4>
+                    <ul>
+                        <li><a href="https://discord.gg/b7NMFqJZBP" target="_blank">Discord</a></li>
+                        <li><a href="https://www.youtube.com/@Darkos1s" target="_blank">YouTube</a></li>
+                        <li><a href="#">GitHub</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Поддержка</h4>
+                    <ul>
+                        <li><a href="https://discord.gg/b7NMFqJZBP" target="_blank">Discord Support</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                        <li><a href="./INSTALLATION.md" target="_blank">Документация</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Dirma Client. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
