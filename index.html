@@ -152,11 +152,16 @@
                 <img src="Dirma.png" alt="Dirma" class="logo-image">
                 <span class="logo-text">Dirma Client</span>
             </div>
-            <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#features">Features</a></li>
-                <li><a href="#download">Download</a></li>
-                <li><a href="#faq">FAQ</a></li>
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links" id="nav-links">
+                <li><a href="#home" onclick="closeMobileMenu()">Home</a></li>
+                <li><a href="#features" onclick="closeMobileMenu()">Features</a></li>
+                <li><a href="#download" onclick="closeMobileMenu()">Download</a></li>
+                <li><a href="#faq" onclick="closeMobileMenu()">FAQ</a></li>
             </ul>
         </div>
     </nav>
