@@ -641,3 +641,20 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Enter') activateKey();
     });
 });
+
+// ==================== МОБИЛЬНОЕ МЕНЮ ====================
+function toggleMobileMenu() {
+    const navLinks = document.getElementById('nav-links');
+    const toggle = document.querySelector('.mobile-menu-toggle');
+    
+    navLinks.classList.toggle('active');
+    toggle.classList.toggle('active');
+}
+
+function closeMobileMenu() {
+    const navLinks = document.getElementById('nav-links');
+    const toggle = document.querySelector('.mobile-menu-toggle');
+    
+    navLinks.classList.remove('active');
+    toggle.classList.remove('active');
+}
