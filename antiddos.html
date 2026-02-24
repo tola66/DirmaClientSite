@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checking your browser - Dirma Client</title>
+    <link rel="icon" type="image/png" href="Dirma.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f111a;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Infinite Particles */
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Animated Grid */
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(87, 83, 222, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(87, 83, 222, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: grid-move 20s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes grid-move {
+            0% {
+                transform: translate(0, 0);
+            }
+            100% {
+                transform: translate(50px, 50px);
+            }
+        }
+
+        /* Floating Orbs */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.3;
+            animation: float-orb 15s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        @keyframes float-orb {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(100px, -100px) scale(1.2);
+            }
+            66% {
+                transform: translate(-100px, 100px) scale(0.8);
+            }
+        }
+
+        /* Main Container */
+        .check-container {
+            position: relative;
+            z-index: 10;
+            width: 600px;
+            background: rgba(26, 29, 46, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 60px 50px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
+                        0 0 0 1px rgba(87, 83, 222, 0.3);
+            animation: container-appear 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes container-appear {
+            0% {
+                opacity: 0;
+                transform: scale(0.8) translateY(50px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        /* Logo */
+        .logo-section {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fade-in-down 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes fade-in-down {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            animation: logo-pulse 2s ease-in-out infinite;
+            box-shadow: 0 10px 30px rgba(87, 83, 222, 0.4);
+        }
+
+        @keyframes logo-pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 10px 30px rgba(87, 83, 222, 0.4);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 15px 40px rgba(87, 83, 222, 0.6);
+            }
+        }
+
+        .logo-text {
+            font-size: 28px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #5753de 0%, #8b87ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .logo-subtitle {
+            color: #a1a4b7;
+            font-size: 14px;
+        }
+
+        /* Status Section */
+        .status-section {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fade-in-up 0.8s ease-out 0.4s both;
+        }
+
+        @keyframes fade-in-up {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .status-title {
+            font-size: 24px;
+            color: #ffffff;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .status-message {
+            color: #a1a4b7;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        /* Loader */
+        .loader-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 40px;
+            animation: fade-in-up 0.8s ease-out 0.6s both;
+        }
+
+        .spinner-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+        }
+
+        .spinner-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 4px solid transparent;
+            border-top-color: #5753de;
+            border-radius: 50%;
+            animation: spin 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+        }
+
+        .spinner-ring:nth-child(2) {
+            border-top-color: #8b87ff;
+            animation-delay: -0.5s;
+            animation-duration: 2s;
+        }
+
+        .spinner-ring:nth-child(3) {
+            border-top-color: #5753de;
+            animation-delay: -1s;
+            animation-duration: 2.5s;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg) scale(1);
+            }
+            50% {
+                transform: rotate(180deg) scale(1.1);
+            }
+            100% {
+                transform: rotate(360deg) scale(1);
+            }
+        }
+
+        .spinner-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #5753de 0%, #8b87ff 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            animation: pulse-center 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-center {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 10px;
+            background: rgba(15, 17, 26, 0.8);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #5753de 0%, #8b87ff 50%, #5753de 100%);
+            background-size: 200% 100%;
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.5s ease;
+            animation: gradient-shift 2s linear infinite;
+            position: relative;
+        }
+
+        @keyframes gradient-shift {
+            0% {
+                background-position: 0% 50%;
+            }
+            100% {
+                background-position: 200% 50%;
+            }
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.4), 
+                transparent);
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        /* Checks List */
+        .checks-list {
+            animation: fade-in-up 0.8s ease-out 0.8s both;
+        }
+
+        .check-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(15, 17, 26, 0.6);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(87, 83, 222, 0.2);
+            transition: all 0.3s;
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        .check-item.active {
+            animation: slide-in-right 0.5s ease-out forwards;
+            border-color: rgba(87, 83, 222, 0.5);
+        }
+
+        @keyframes slide-in-right {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .check-item.completed {
+            border-color: rgba(76, 175, 80, 0.5);
+            background: rgba(76, 175, 80, 0.1);
+        }
+
+        .check-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            background: rgba(87, 83, 222, 0.2);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .check-item.completed .check-icon {
+            background: rgba(76, 175, 80, 0.3);
+            animation: bounce 0.6s ease-out;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+        }
+
+        .check-text {
+            flex: 1;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .check-status {
+            color: #a1a4b7;
+            font-size: 14px;
+        }
+
+        .check-item.completed .check-status {
+            color: #4CAF50;
+        }
+
+        /* Footer */
+        .footer-text {
+            text-align: center;
+            color: #a1a4b7;
+            font-size: 12px;
+            margin-top: 30px;
+            animation: fade-in-up 0.8s ease-out 1s both;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .check-container {
+                width: 95%;
+                padding: 40px 25px;
+            }
+
+            .spinner-container {
+                width: 100px;
+                height: 100px;
+            }
+
+            .spinner-center {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+
+            .logo-img {
+                width: 60px;
+                height: 60px;
+            }
+
+            .logo-text {
+                font-size: 24px;
+            }
+
+            .logo-subtitle {
+                font-size: 13px;
+            }
+
+            .status-title {
+                font-size: 20px;
+            }
+
+            .status-message {
+                font-size: 14px;
+            }
+
+            .check-item {
+                padding: 12px;
+                gap: 12px;
+            }
+
+            .check-icon {
+                width: 28px;
+                height: 28px;
+                font-size: 16px;
+            }
+
+            .check-text {
+                font-size: 14px;
+            }
+
+            .check-status {
+                font-size: 12px;
+            }
+
+            .progress-label {
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .check-container {
+                width: 95%;
+                padding: 30px 20px;
+            }
+
+            .logo-img {
+                width: 50px;
+                height: 50px;
+            }
+
+            .logo-text {
+                font-size: 20px;
+            }
+
+            .logo-subtitle {
+                font-size: 12px;
+            }
+
+            .status-title {
+                font-size: 18px;
+            }
+
+            .status-message {
+                font-size: 13px;
+                line-height: 1.5;
+            }
+
+            .spinner-container {
+                width: 80px;
+                height: 80px;
+            }
+
+            .spinner-center {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+            }
+
+            .spinner-ring {
+                border-width: 3px;
+            }
+
+            .check-item {
+                padding: 10px;
+                gap: 10px;
+            }
+
+            .check-icon {
+                width: 24px;
+                height: 24px;
+                font-size: 14px;
+            }
+
+            .check-text {
+                font-size: 13px;
+            }
+
+            .check-status {
+                font-size: 11px;
+            }
+
+            .progress-bar-bg {
+                height: 8px;
+            }
+
+            .footer-text {
+                font-size: 11px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .check-container {
+                padding: 25px 15px;
+            }
+
+            .logo-img {
+                width: 45px;
+                height: 45px;
+            }
+
+            .logo-text {
+                font-size: 18px;
+            }
+
+            .status-title {
+                font-size: 16px;
+            }
+
+            .status-message {
+                font-size: 12px;
+            }
+
+            .spinner-container {
+                width: 70px;
+                height: 70px;
+            }
+
+            .spinner-center {
+                width: 35px;
+                height: 35px;
+                font-size: 16px;
+            }
+
+            .check-item {
+                padding: 8px;
+                margin-bottom: 8px;
+            }
+
+            .check-text {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-bg"></div>
+    <canvas id="particles-canvas"></canvas>
+    
+    <div id="orbs-container"></div>
+
+    <div class="check-container">
+        <div class="logo-section">
+            <img src="Dirma.png" alt="Dirma" class="logo-img">
+            <div class="logo-text">Dirma Client</div>
+            <div class="logo-subtitle">Security Check</div>
+        </div>
+
+        <div class="status-section">
+            <div class="status-title">Checking your browser...</div>
+            <div class="status-message">This process is automatic. Your browser will redirect to your requested content shortly.</div>
+        </div>
+
+        <div class="loader-section">
+            <div class="spinner-container">
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+                <div class="spinner-center">🛡️</div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-label">
+                    <span id="progressText">Initializing...</span>
+                    <span id="progressPercent">0%</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="checks-list">
+            <div class="check-item" id="check1">
+                <div class="check-icon">🌐</div>
+                <div class="check-text">Checking browser</div>
+                <div class="check-status">Pending</div>
+            </div>
+            <div class="check-item" id="check2">
+                <div class="check-icon">🔒</div>
+                <div class="check-text">Verifying security</div>
+                <div class="check-status">Pending</div>
+            </div>
+            <div class="check-item" id="check3">
+                <div class="check-icon">🤖</div>
+                <div class="check-text">Detecting bots</div>
+                <div class="check-status">Pending</div>
+            </div>
+            <div class="check-item" id="check4">
+                <div class="check-icon">✅</div>
+                <div class="check-text">Finalizing</div>
+                <div class="check-status">Pending</div>
+            </div>
+        </div>
+
+        <div class="footer-text">
+            Protected by Dirma AntiDDoS System
+        </div>
+    </div>
+
+    <script>
+        // Infinite Particles System
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = (Math.random() - 0.5) * 2;
+                this.speedY = (Math.random() - 0.5) * 2;
+                this.opacity = Math.random() * 0.5 + 0.2;
+                this.color = `rgba(87, 83, 222, ${this.opacity})`;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                // Wrap around screen
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        const particles = [];
+        for (let i = 0; i < 100; i++) {
+            particles.push(new Particle());
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+
+            // Draw connections
+            particles.forEach((p1, i) => {
+                particles.slice(i + 1).forEach(p2 => {
+                    const dx = p1.x - p2.x;
+                    const dy = p1.y - p2.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 150) {
+                        ctx.strokeStyle = `rgba(87, 83, 222, ${0.2 * (1 - distance / 150)})`;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(p1.x, p1.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                });
+            });
+
+            requestAnimationFrame(animateParticles);
+        }
+
+        animateParticles();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Floating Orbs
+        const orbsContainer = document.getElementById('orbs-container');
+        for (let i = 0; i < 3; i++) {
+            const orb = document.createElement('div');
+            orb.className = 'orb';
+            orb.style.width = (Math.random() * 300 + 200) + 'px';
+            orb.style.height = orb.style.width;
+            orb.style.left = Math.random() * 100 + '%';
+            orb.style.top = Math.random() * 100 + '%';
+            orb.style.background = `radial-gradient(circle, rgba(87, 83, 222, 0.4), transparent)`;
+            orb.style.animationDelay = (i * 5) + 's';
+            orbsContainer.appendChild(orb);
+        }
+
+        // Security Check Process
+        const checks = [
+            { id: 'check1', text: 'Checking browser', duration: 1500 },
+            { id: 'check2', text: 'Verifying security', duration: 2000 },
+            { id: 'check3', text: 'Detecting bots', duration: 1800 },
+            { id: 'check4', text: 'Finalizing', duration: 1200 }
+        ];
+
+        let currentCheck = 0;
+        let progress = 0;
+
+        function updateProgress(percent, text) {
+            document.getElementById('progressBar').style.width = percent + '%';
+            document.getElementById('progressPercent').textContent = percent + '%';
+            document.getElementById('progressText').textContent = text;
+        }
+
+        function completeCheck(checkId) {
+            const checkElement = document.getElementById(checkId);
+            checkElement.classList.add('completed');
+            checkElement.querySelector('.check-status').textContent = 'Complete';
+        }
+
+        async function runSecurityCheck() {
+            for (let i = 0; i < checks.length; i++) {
+                const check = checks[i];
+                
+                // Activate check
+                document.getElementById(check.id).classList.add('active');
+                updateProgress((i / checks.length) * 100, check.text);
+                
+                // Wait
+                await new Promise(resolve => setTimeout(resolve, check.duration));
+                
+                // Complete check
+                completeCheck(check.id);
+                updateProgress(((i + 1) / checks.length) * 100, check.text + ' - Complete');
+            }
+
+            // Redirect
+            updateProgress(100, 'Redirecting...');
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            // Store verification with timestamp
+            localStorage.setItem('ddos_check_passed', 'true');
+            localStorage.setItem('ddos_check_time', Date.now().toString());
+            window.location.href = 'index.html';
+        }
+
+        // Check if already verified (within 1 hour)
+        const ddosCheckPassed = localStorage.getItem('ddos_check_passed');
+        const ddosCheckTime = localStorage.getItem('ddos_check_time');
+        const validTime = 3600000; // 1 hour
+        const now = Date.now();
+        
+        if (ddosCheckPassed === 'true' && ddosCheckTime && (now - parseInt(ddosCheckTime)) < validTime) {
+            // Already verified, redirect immediately
+            window.location.href = 'index.html';
+        } else {
+            // Start check after 1 second
+            setTimeout(runSecurityCheck, 1000);
+        }
+    </script>
+</body>
+</html>

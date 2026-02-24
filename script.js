@@ -338,30 +338,112 @@ function _0xf(index) {
 const API_URL = _0xurl();
 let currentUser = null;
 
+// ==================== COOKIE FUNCTIONS ====================
+function setCookie(name, value, days) {
+    let expires = "";
+    if (days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Strict";
+}
+
+function getCookie(name) {
+    const nameEQ = name + "=";
+    const ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+}
+
+function deleteCookie(name) {
+    document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
+
+// Сохранение пользователя в cookie (зашифрованно)
+function saveUserToCookie(user) {
+    const userData = JSON.stringify(user);
+    const encoded = btoa(userData); // Base64 encoding
+    setCookie('dirma_user', encoded, 7); // 7 days
+}
+
+// Загрузка пользователя из cookie
+function loadUserFromCookie() {
+    const encoded = getCookie('dirma_user');
+    if (!encoded) return null;
+    
+    try {
+        const userData = atob(encoded); // Base64 decoding
+        return JSON.parse(userData);
+    } catch (e) {
+        deleteCookie('dirma_user');
+        return null;
+    }
+}
+
+// Удаление пользователя из cookie
+function removeUserFromCookie() {
+    deleteCookie('dirma_user');
+}
+
+// ==================== LOCAL STORAGE FOR USERS ====================
+function getLocalUsers() {
+    const users = getCookie('dirma_users');
+    if (!users) return [];
+    
+    try {
+        const decoded = atob(users);
+        return JSON.parse(decoded);
+    } catch (e) {
+        return [];
+    }
+}
+
+function saveLocalUsers(users) {
+    const encoded = btoa(JSON.stringify(users));
+    setCookie('dirma_users', encoded, 365); // 1 year
+}
+
+// Генерация HWID
+function generateHWID() {
+    const chars = '0123456789ABCDEF';
+    let hwid = '';
+    for (let i = 0; i < 32; i++) {
+        hwid += chars[Math.floor(Math.random() * chars.length)];
+    }
+    return hwid;
+}
+
 // Загрузка данных с API
 async function fetchAPI() {
     try {
-        const response = await fetch(API_URL);
-        return await response.json();
+        // Добавляем timestamp для обхода кэша
+        const timestamp = new Date().getTime();
+        const response = await fetch(API_URL + '?t=' + timestamp, {
+            cache: 'no-cache',
+            headers: {
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache'
+            }
+        });
+        const data = await response.json();
+        console.log('Fetched API data:', data);
+        return data;
     } catch (error) {
         console.error('API Error:', error);
         return null;
     }
 }
 
-// Сохранение данных на API
+// Сохранение данных на API (не работает из браузера из-за CORS)
 async function saveAPI(data) {
-    try {
-        const response = await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        });
-        return response.ok;
-    } catch (error) {
-        console.error('API Save Error:', error);
-        return false;
-    }
+    // Браузеры блокируют POST к npoint.io
+    // Используйте DirmaLoader для активации ключей
+    return false;
 }
 
 // Вход
@@ -376,27 +458,65 @@ async function login() {
     }
     
     error.textContent = 'Checking...';
-    const data = await fetchAPI();
     
-    if (!data) {
-        error.textContent = 'Server connection error';
-        return;
-    }
-    
-    const user = data[_0xf(0)].find(u => u[_0xf(2)] === username && u[_0xf(3)] === password);
+    // Сначала проверяем локальных пользователей
+    const localUsers = getLocalUsers();
+    let user = localUsers.find(u => u.username === username && u.password === password);
     
     if (!user) {
-        error.textContent = 'Invalid username or password';
-        return;
+        // Если не найден локально, проверяем на сервере
+        const data = await fetchAPI();
+        
+        if (!data) {
+            error.textContent = 'Server connection error';
+            return;
+        }
+        
+        console.log('API data:', data);
+        console.log('Looking for username:', username);
+        console.log('Users from API:', data[_0xf(0)]);
+        
+        user = data[_0xf(0)].find(u => {
+            console.log('Checking user:', u);
+            console.log('Username match:', u[_0xf(2)] === username, u[_0xf(2)], username);
+            console.log('Password match:', u[_0xf(3)] === password);
+            return u[_0xf(2)] === username && u[_0xf(3)] === password;
+        });
+        
+        if (!user) {
+            error.textContent = 'Invalid username or password';
+            console.log('User not found in API');
+            return;
+        }
+        
+        console.log('Found user from API:', user);
+        
+        // Нормализуем данные с сервера
+        user = {
+            username: user[_0xf(2)] || user.username,
+            password: user[_0xf(3)] || user.password,
+            hwid: user[_0xf(5)] || user.hwid || '',
+            sub: user[_0xf(4)] || user.sub || 'Expired'
+        };
+        
+        console.log('Normalized user:', user);
     }
     
     // Успешный вход
     currentUser = user;
-    localStorage.setItem('dirma_user', JSON.stringify(user));
+    saveUserToCookie(user);
     
+    console.log('Login successful, user:', currentUser);
+    
+    // Обновляем все кнопки
+    updateAllButtons();
+    
+    // Показываем панель аккаунта (модальное окно остается открытым)
     showAccountPanel();
-    updateAccountButton();
+    
     error.textContent = '';
+    
+    // НЕ закрываем модальное окно - пользователь должен видеть свою панель аккаунта
 }
 
 // Регистрация
@@ -427,43 +547,41 @@ async function register() {
     }
     
     error.textContent = 'Registering...';
-    const data = await fetchAPI();
     
-    if (!data) {
-        error.textContent = 'Server connection error';
-        return;
-    }
-    
-    // Проверка существования пользователя
-    if (data[_0xf(0)].find(u => u[_0xf(2)] === username)) {
+    // Проверяем существование пользователя в локальном хранилище
+    const existingUsers = getLocalUsers();
+    if (existingUsers.find(u => u.username === username)) {
         error.textContent = 'User with this name already exists';
         return;
     }
     
     // Создание нового пользователя
     const newUser = {
-        [_0xf(2)]: username,
-        [_0xf(3)]: password,
-        [_0xf(5)]: '',
-        [_0xf(4)]: 'Expired'
+        username: username,
+        password: password,
+        hwid: '', // HWID привязывается при первом запуске клиента
+        sub: 'Expired'
     };
     
-    data[_0xf(0)].push(newUser);
-    
-    const saved = await saveAPI(data);
-    
-    if (!saved) {
-        error.textContent = 'Data save error';
-        return;
-    }
+    // Сохраняем в локальное хранилище
+    existingUsers.push(newUser);
+    saveLocalUsers(existingUsers);
     
     // Автоматический вход
     currentUser = newUser;
-    localStorage.setItem('dirma_user', JSON.stringify(newUser));
+    saveUserToCookie(newUser);
     
+    console.log('Registration successful, user:', currentUser);
+    
+    // Обновляем все кнопки
+    updateAllButtons();
+    
+    // Показываем панель аккаунта (модальное окно остается открытым)
     showAccountPanel();
-    updateAccountButton();
+    
     error.textContent = '';
+    
+    // НЕ закрываем модальное окно - пользователь должен видеть свою панель аккаунта
 }
 
 // Активация ключа
@@ -489,50 +607,70 @@ async function activateKey() {
         return;
     }
     
+    console.log('Available keys:', data[_0xf(1)]);
+    console.log('Trying to activate key:', key);
+    
     // Проверка существования ключа
     const keyIndex = data[_0xf(1)].indexOf(key);
     
     if (keyIndex === -1) {
         error.textContent = 'Invalid key';
+        console.log('Key not found in list');
         return;
     }
     
-    // Удаление ключа из списка
-    data[_0xf(1)].splice(keyIndex, 1);
+    console.log('Key found! Activating subscription...');
     
-    // Активация подписки
-    const userIndex = data[_0xf(0)].findIndex(u => u[_0xf(2)] === currentUser[_0xf(2)]);
-    if (userIndex !== -1) {
-        data[_0xf(0)][userIndex][_0xf(4)] = 'Active';
-        currentUser[_0xf(4)] = 'Active';
+    // Активируем подписку локально
+    currentUser.sub = 'Active';
+    
+    // Обновляем в локальном хранилище
+    const localUsers = getLocalUsers();
+    const localUserIndex = localUsers.findIndex(u => u.username === currentUser.username);
+    if (localUserIndex !== -1) {
+        localUsers[localUserIndex].sub = 'Active';
+        saveLocalUsers(localUsers);
     }
     
-    const saved = await saveAPI(data);
-    
-    if (!saved) {
-        error.textContent = 'Data save error';
-        return;
-    }
-    
-    localStorage.setItem('dirma_user', JSON.stringify(currentUser));
+    saveUserToCookie(currentUser);
     
     // Показываем успех
     error.style.color = '#4CAF50';
-    error.textContent = 'Key successfully activated!';
+    error.textContent = '✓ Key activated! (Local session only)';
+    
+    // Обновляем все кнопки
+    updateAllButtons();
+    
+    // Показываем уведомление с пояснением
+    showNotification('Subscription activated locally! Use DirmaLoader for permanent activation.', 'success');
     
     setTimeout(() => {
         showAccountPanel();
         error.style.color = '#ff6b6b';
         error.textContent = '';
-    }, 2000);
+    }, 3000);
 }
 
 // Выход
 function logout() {
+    console.log('Logging out...');
+    
+    // Очищаем текущего пользователя
     currentUser = null;
-    localStorage.removeItem('dirma_user');
-    updateAccountButton();
+    
+    // Удаляем cookie
+    removeUserFromCookie();
+    
+    // Обновляем все кнопки
+    updateAllButtons();
+    
+    // Закрываем модальное окно
     closeAuth();
+    
+    // Показываем уведомление
+    showNotification('Successfully logged out', 'info');
+    
+    console.log('Logout complete');
 }
 
 // Показать форму входа
@@ -571,25 +709,76 @@ function showAccountPanel() {
     document.getElementById('activate-form').classList.add('hidden');
     document.getElementById('account-panel').classList.remove('hidden');
     
-    document.getElementById('account-username').textContent = currentUser[_0xf(2)];
+    // Обновляем username
+    document.getElementById('account-username').textContent = currentUser.username || currentUser[_0xf(2)];
+    
+    // Обновляем subscription status
     const statusEl = document.getElementById('account-status');
-    statusEl.textContent = `Subscription: ${currentUser[_0xf(4)]}`;
-    statusEl.className = 'account-status ' + (currentUser[_0xf(4)] === 'Active' ? 'active' : 'expired');
+    const sub = currentUser.sub || currentUser[_0xf(4)];
+    statusEl.textContent = `Subscription: ${sub}`;
+    statusEl.className = 'account-status ' + (sub === 'Active' ? 'active' : 'expired');
+    
+    // Обновляем HWID
+    const hwidEl = document.getElementById('account-hwid');
+    const hwidNote = document.querySelector('.info-note');
+    const hwid = currentUser.hwid || currentUser[_0xf(5)] || '';
+    
+    if (hwid && hwid.length > 0) {
+        hwidEl.textContent = hwid;
+        hwidEl.style.color = 'var(--text-primary)';
+        hwidEl.title = 'HWID is bound to your PC';
+        // Скрываем информационное сообщение если HWID уже привязан
+        if (hwidNote) hwidNote.style.display = 'none';
+    } else {
+        hwidEl.textContent = 'Not bound yet';
+        hwidEl.style.color = 'var(--text-secondary)';
+        hwidEl.title = 'HWID will be bound on first client launch';
+        // Показываем информационное сообщение
+        if (hwidNote) hwidNote.style.display = 'flex';
+    }
+    
+    // Обновляем navbar сразу
+    updateNavLoginButton();
 }
 
 // Открыть окно авторизации
 function openAuth() {
-    document.getElementById('auth-overlay').classList.remove('hidden');
+    const overlay = document.getElementById('auth-overlay');
+    overlay.classList.remove('hidden');
+    
     if (currentUser) {
+        // Если пользователь залогинен, показываем панель аккаунта
         showAccountPanel();
     } else {
+        // Иначе показываем форму логина
         showLogin();
     }
 }
 
 // Закрыть окно авторизации
 function closeAuth() {
-    document.getElementById('auth-overlay').classList.add('hidden');
+    const overlay = document.getElementById('auth-overlay');
+    overlay.classList.add('hidden');
+    
+    // Очищаем поля форм
+    document.getElementById('login-username').value = '';
+    document.getElementById('login-password').value = '';
+    document.getElementById('register-username').value = '';
+    document.getElementById('register-password').value = '';
+    document.getElementById('register-password2').value = '';
+    document.getElementById('activate-key').value = '';
+    
+    // Очищаем ошибки
+    document.getElementById('login-error').textContent = '';
+    document.getElementById('register-error').textContent = '';
+    document.getElementById('activate-error').textContent = '';
+    
+    // Показываем форму логина по умолчанию
+    setTimeout(() => {
+        if (!currentUser) {
+            showLogin();
+        }
+    }, 300);
 }
 
 // Обновить кнопку аккаунта
@@ -597,15 +786,29 @@ function updateAccountButton() {
     const button = document.getElementById('account-button');
     const text = document.getElementById('account-button-text');
     
+    if (!button || !text) {
+        console.error('Account button elements not found!');
+        return;
+    }
+    
     if (currentUser) {
-        text.textContent = currentUser[_0xf(2)];
-        button.style.background = currentUser[_0xf(4)] === 'Active' 
+        const username = currentUser.username || currentUser[_0xf(2)] || 'User';
+        const sub = currentUser.sub || currentUser[_0xf(4)] || 'Expired';
+        
+        text.textContent = username;
+        button.style.background = sub === 'Active' 
             ? 'linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%)'
             : 'linear-gradient(135deg, #ff6b6b 0%, #ff8787 100%)';
+        
+        console.log('Account button updated:', username, sub);
     } else {
         text.textContent = 'Login';
         button.style.background = 'var(--gradient-1)';
+        console.log('Account button reset to Login');
     }
+    
+    // Обновляем navbar тоже
+    updateNavLoginButton();
 }
 
 // Проверка авторизации при загрузке
@@ -615,15 +818,14 @@ window.addEventListener('load', () => {
         document.getElementById('account-button').classList.remove('hidden');
     }, 500);
     
-    // Проверяем сохраненного пользователя
-    const savedUser = localStorage.getItem('dirma_user');
+    // Проверяем сохраненного пользователя из cookie
+    const savedUser = loadUserFromCookie();
     if (savedUser) {
-        try {
-            currentUser = JSON.parse(savedUser);
-            updateAccountButton();
-        } catch (e) {
-            localStorage.removeItem('dirma_user');
-        }
+        currentUser = savedUser;
+        console.log('User loaded from cookie:', currentUser);
+        updateAllButtons();
+    } else {
+        console.log('No saved user found');
     }
 });
 
@@ -640,6 +842,77 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('activate-key')?.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') activateKey();
     });
+    
+    // Password strength indicator
+    const passwordInput = document.getElementById('register-password');
+    const strengthBar = document.getElementById('password-strength');
+    const strengthFill = document.getElementById('strength-fill');
+    const strengthText = document.getElementById('strength-text');
+    
+    if (passwordInput) {
+        passwordInput.addEventListener('input', (e) => {
+            const password = e.target.value;
+            
+            if (password.length === 0) {
+                strengthBar.classList.remove('active');
+                return;
+            }
+            
+            strengthBar.classList.add('active');
+            
+            let strength = 0;
+            
+            // Length check
+            if (password.length >= 6) strength += 25;
+            if (password.length >= 10) strength += 25;
+            
+            // Contains numbers
+            if (/\d/.test(password)) strength += 15;
+            
+            // Contains lowercase
+            if (/[a-z]/.test(password)) strength += 10;
+            
+            // Contains uppercase
+            if (/[A-Z]/.test(password)) strength += 15;
+            
+            // Contains special characters
+            if (/[^a-zA-Z0-9]/.test(password)) strength += 10;
+            
+            strengthFill.style.width = strength + '%';
+            
+            if (strength < 30) {
+                strengthText.textContent = 'Weak password';
+                strengthText.style.color = '#ff6b6b';
+            } else if (strength < 60) {
+                strengthText.textContent = 'Medium password';
+                strengthText.style.color = '#f89820';
+            } else {
+                strengthText.textContent = 'Strong password';
+                strengthText.style.color = '#4CAF50';
+            }
+        });
+    }
+    
+    // Auto-format activation key
+    const activateKeyInput = document.getElementById('activate-key');
+    if (activateKeyInput) {
+        activateKeyInput.addEventListener('input', (e) => {
+            let value = e.target.value.replace(/[^A-Z0-9]/g, '');
+            
+            // Format as KEY-XXXX-XXXX
+            if (value.length > 3) {
+                value = value.substring(0, 3) + '-' + value.substring(3);
+            }
+            if (value.length > 8) {
+                value = value.substring(0, 8) + '-' + value.substring(8);
+            }
+            if (value.length > 13) {
+                value = value.substring(0, 13) + '-' + value.substring(13, 17);
+            }
+            
+            e.target.value = value;
+        });
+    }
 });
 
 // ==================== МОБИЛЬНОЕ МЕНЮ ====================
@@ -677,3 +950,162 @@ function downloadVPN() {
         showNotification('Run DirmaVPN.exe to start protection', 'info');
     }, 2000);
 }
+
+// ==================== PARTICLES & ORBS ANIMATION ====================
+// Infinite Particles System
+const canvas = document.getElementById('particles-canvas');
+if (canvas) {
+    const ctx = canvas.getContext('2d');
+    
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    class Particle {
+        constructor() {
+            this.reset();
+        }
+
+        reset() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.size = Math.random() * 2.5 + 0.5;
+            this.speedX = (Math.random() - 0.5) * 1.5;
+            this.speedY = (Math.random() - 0.5) * 1.5;
+            this.opacity = Math.random() * 0.4 + 0.1;
+            this.color = `rgba(87, 83, 222, ${this.opacity})`;
+        }
+
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+
+            // Wrap around screen
+            if (this.x > canvas.width) this.x = 0;
+            if (this.x < 0) this.x = canvas.width;
+            if (this.y > canvas.height) this.y = 0;
+            if (this.y < 0) this.y = canvas.height;
+        }
+
+        draw() {
+            ctx.fillStyle = this.color;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    const particles = [];
+    for (let i = 0; i < 80; i++) {
+        particles.push(new Particle());
+    }
+
+    function animateParticles() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        particles.forEach(particle => {
+            particle.update();
+            particle.draw();
+        });
+
+        // Draw connections
+        particles.forEach((p1, i) => {
+            particles.slice(i + 1).forEach(p2 => {
+                const dx = p1.x - p2.x;
+                const dy = p1.y - p2.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < 120) {
+                    ctx.strokeStyle = `rgba(87, 83, 222, ${0.15 * (1 - distance / 120)})`;
+                    ctx.lineWidth = 0.8;
+                    ctx.beginPath();
+                    ctx.moveTo(p1.x, p1.y);
+                    ctx.lineTo(p2.x, p2.y);
+                    ctx.stroke();
+                }
+            });
+        });
+
+        requestAnimationFrame(animateParticles);
+    }
+
+    animateParticles();
+
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+}
+
+// Floating Orbs
+const orbsContainer = document.getElementById('orbs-container');
+if (orbsContainer) {
+    for (let i = 0; i < 4; i++) {
+        const orb = document.createElement('div');
+        orb.className = 'orb';
+        const size = Math.random() * 250 + 200;
+        orb.style.width = size + 'px';
+        orb.style.height = size + 'px';
+        orb.style.left = Math.random() * 100 + '%';
+        orb.style.top = Math.random() * 100 + '%';
+        
+        const colors = [
+            'radial-gradient(circle, rgba(87, 83, 222, 0.3), transparent)',
+            'radial-gradient(circle, rgba(139, 135, 255, 0.25), transparent)',
+            'radial-gradient(circle, rgba(87, 83, 222, 0.2), transparent)',
+            'radial-gradient(circle, rgba(139, 135, 255, 0.3), transparent)'
+        ];
+        
+        orb.style.background = colors[i];
+        orb.style.animationDelay = (i * 5) + 's';
+        orb.style.animationDuration = (15 + i * 3) + 's';
+        orbsContainer.appendChild(orb);
+    }
+}
+
+// Update navbar login button text based on user state
+function updateNavLoginButton() {
+    const navLoginBtn = document.getElementById('nav-login-btn');
+    if (!navLoginBtn) {
+        console.error('nav-login-btn element not found!');
+        return;
+    }
+    
+    if (currentUser) {
+        // Получаем username из объекта пользователя
+        const username = currentUser.username || currentUser[_0xf(2)] || 'User';
+        const subscription = currentUser.sub || currentUser[_0xf(4)] || 'Expired';
+        
+        navLoginBtn.textContent = username;
+        
+        if (subscription === 'Active') {
+            navLoginBtn.style.background = 'linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%)';
+        } else {
+            navLoginBtn.style.background = 'linear-gradient(135deg, #ff6b6b 0%, #ff8787 100%)';
+        }
+        
+        console.log('Navbar updated with username:', username, 'subscription:', subscription);
+    } else {
+        navLoginBtn.textContent = 'Login';
+        navLoginBtn.style.background = 'var(--gradient-1)';
+        console.log('Navbar reset to Login');
+    }
+}
+
+// Update both buttons when user state changes
+function updateAllButtons() {
+    updateAccountButton();
+    updateNavLoginButton();
+}
+
+// Call after login
+function afterLogin() {
+    updateAllButtons();
+}
+
+// Initialize on load
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        updateNavLoginButton();
+        console.log('Initial navbar update, currentUser:', currentUser);
+    }, 100);
+});

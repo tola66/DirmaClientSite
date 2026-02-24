@@ -9,6 +9,21 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <script>
+        // AntiDDoS Check - Redirect if not verified
+        (function() {
+            const ddosCheckPassed = localStorage.getItem('ddos_check_passed');
+            const ddosCheckTime = localStorage.getItem('ddos_check_time');
+            const validTime = 3600000; // 1 hour
+            const now = Date.now();
+            
+            if (!ddosCheckPassed || ddosCheckPassed !== 'true' || !ddosCheckTime || (now - parseInt(ddosCheckTime)) >= validTime) {
+                // Need verification, redirect to AntiDDoS page
+                window.location.href = 'antiddos.html';
+            }
+        })();
+    </script>
+
     <!-- Captcha -->
     <div id="captcha-overlay" class="captcha-overlay">
         <div class="captcha-modal">
@@ -44,19 +59,25 @@
                         <span class="logo-icon">D</span>
                         <span class="logo-text">Dirma Client</span>
                     </div>
-                    <h2>Login</h2>
-                    <p>Sign in to download the client</p>
+                    <h2>Welcome Back</h2>
+                    <p>Sign in to your account</p>
                 </div>
                 <div class="auth-content">
-                    <input type="text" id="login-username" class="auth-input" placeholder="Username">
-                    <input type="password" id="login-password" class="auth-input" placeholder="Password">
+                    <div class="input-group">
+                        <span class="input-icon">👤</span>
+                        <input type="text" id="login-username" class="auth-input" placeholder="Username">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" id="login-password" class="auth-input" placeholder="Password">
+                    </div>
                     <button class="btn btn-primary auth-submit" onclick="login()">
                         <span class="btn-icon">→</span>
                         Sign In
                     </button>
                     <div id="login-error" class="auth-error"></div>
                     <div class="auth-switch">
-                        No account? <a href="#" onclick="showRegister(); return false;">Register</a>
+                        No account? <a href="#" onclick="showRegister(); return false;">Create Account</a>
                     </div>
                 </div>
             </div>
@@ -68,16 +89,31 @@
                         <span class="logo-icon">D</span>
                         <span class="logo-text">Dirma Client</span>
                     </div>
-                    <h2>Register</h2>
-                    <p>Create an account for access</p>
+                    <h2>Create Account</h2>
+                    <p>Join the Dirma community</p>
                 </div>
                 <div class="auth-content">
-                    <input type="text" id="register-username" class="auth-input" placeholder="Username">
-                    <input type="password" id="register-password" class="auth-input" placeholder="Password">
-                    <input type="password" id="register-password2" class="auth-input" placeholder="Confirm Password">
+                    <div class="input-group">
+                        <span class="input-icon">👤</span>
+                        <input type="text" id="register-username" class="auth-input" placeholder="Username" maxlength="20">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" id="register-password" class="auth-input" placeholder="Password" maxlength="50">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-icon">✓</span>
+                        <input type="password" id="register-password2" class="auth-input" placeholder="Confirm Password" maxlength="50">
+                    </div>
+                    <div class="password-strength" id="password-strength">
+                        <div class="strength-bar">
+                            <div class="strength-fill" id="strength-fill"></div>
+                        </div>
+                        <span class="strength-text" id="strength-text">Password strength</span>
+                    </div>
                     <button class="btn btn-primary auth-submit" onclick="register()">
                         <span class="btn-icon">✓</span>
-                        Register
+                        Create Account
                     </button>
                     <div id="register-error" class="auth-error"></div>
                     <div class="auth-switch">
@@ -94,13 +130,20 @@
                         <span class="logo-text">Dirma Client</span>
                     </div>
                     <h2>Activate Key</h2>
-                    <p>Enter key to activate subscription</p>
+                    <p>Enter your activation key</p>
                 </div>
                 <div class="auth-content">
-                    <input type="text" id="activate-key" class="auth-input" placeholder="KEY-XXXX-XXXX" style="text-transform: uppercase;">
+                    <div class="info-note" style="margin-bottom: 15px;">
+                        <span class="info-icon">ℹ️</span>
+                        <span class="info-text">Website activation is temporary. For permanent activation, use DirmaLoader.exe</span>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-icon">🔑</span>
+                        <input type="text" id="activate-key" class="auth-input" placeholder="KEY-XXXX-XXXX" style="text-transform: uppercase;" maxlength="19">
+                    </div>
                     <button class="btn btn-primary auth-submit" onclick="activateKey()">
-                        <span class="btn-icon">🔑</span>
-                        Activate
+                        <span class="btn-icon">✓</span>
+                        Activate (Local)
                     </button>
                     <div id="activate-error" class="auth-error"></div>
                     <div class="auth-switch">
@@ -120,6 +163,16 @@
                     <p id="account-status" class="account-status">Subscription: Active</p>
                 </div>
                 <div class="auth-content">
+                    <div class="account-info">
+                        <div class="info-item">
+                            <span class="info-label">HWID:</span>
+                            <span class="info-value" id="account-hwid">Not bound yet</span>
+                        </div>
+                        <div class="info-note">
+                            <span class="info-icon">ℹ️</span>
+                            <span class="info-text">HWID will be automatically bound to your PC when you first launch the client</span>
+                        </div>
+                    </div>
                     <button class="btn btn-primary auth-submit" onclick="showActivateForm()">
                         <span class="btn-icon">🔑</span>
                         Activate Key
@@ -133,17 +186,20 @@
         </div>
     </div>
 
-    <!-- Account Button -->
-    <div id="account-button" class="account-button hidden" onclick="openAuth()">
-        <span class="account-icon">👤</span>
-        <span id="account-button-text">Login</span>
-    </div>
-
     <!-- Фоновая анимация -->
     <div class="background">
         <div class="stars"></div>
         <div class="gradient-overlay"></div>
     </div>
+    
+    <!-- Animated Grid -->
+    <div class="grid-bg"></div>
+    
+    <!-- Particles Canvas -->
+    <canvas id="particles-canvas"></canvas>
+    
+    <!-- Floating Orbs -->
+    <div id="orbs-container"></div>
 
     <!-- Navigation -->
     <nav class="navbar">
@@ -163,6 +219,7 @@
                 <li><a href="vpn.html">VPN</a></li>
                 <li><a href="#download" onclick="closeMobileMenu()">Download</a></li>
                 <li><a href="#faq" onclick="closeMobileMenu()">FAQ</a></li>
+                <li><a href="#" class="nav-login-btn" id="nav-login-btn" onclick="openAuth(); closeMobileMenu(); return false;">Login</a></li>
             </ul>
         </div>
     </nav>
@@ -373,6 +430,15 @@
         <div class="container">
             <h2 class="section-title">Frequently Asked Questions</h2>
             <div class="faq-list">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>How does key activation work?</h4>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Website activation is temporary (7 days in browser). For permanent activation, use DirmaLoader.exe which updates the server and binds your HWID. The website lets you preview your subscription status instantly.</p>
+                    </div>
+                </div>
                 <div class="faq-item">
                     <div class="faq-question">
                         <h4>Is Java required for the client?</h4>
