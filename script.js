@@ -421,7 +421,6 @@ function generateHWID() {
 // Загрузка данных с API
 async function fetchAPI() {
     try {
-        // Добавляем timestamp для обхода кэша
         const timestamp = new Date().getTime();
         const response = await fetch(API_URL + '?t=' + timestamp, {
             cache: 'no-cache',
@@ -430,6 +429,11 @@ async function fetchAPI() {
                 'Pragma': 'no-cache'
             }
         });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        
         const data = await response.json();
         console.log('Fetched API data:', data);
         return data;
@@ -439,11 +443,29 @@ async function fetchAPI() {
     }
 }
 
-// Сохранение данных на API (не работает из браузера из-за CORS)
+// Сохранение данных на API
 async function saveAPI(data) {
-    // Браузеры блокируют POST к npoint.io
-    // Используйте DirmaLoader для активации ключей
-    return false;
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        
+        const result = await response.json();
+        console.log('API updated successfully:', result);
+        return true;
+    } catch (error) {
+        console.error('API Save Error:', error);
+        console.error('Note: Direct API updates may be blocked by CORS in browser');
+        return false;
+    }
 }
 
 // Вход
@@ -619,14 +641,60 @@ async function activateKey() {
         return;
     }
     
-    console.log('Key found! Activating subscription...');
+    console.log('Key found! Activating subscription on server...');
+    error.textContent = 'Activating on server...';
     
-    // Активируем подписку локально
+    // Удаляем использованный ключ из массива
+    data[_0xf(1)].splice(keyIndex, 1);
+    
+    // Находим пользователя в API или создаем нового
+    const username = currentUser.username || currentUser[_0xf(2)];
+    let userIndex = data[_0xf(0)].findIndex(u => u[_0xf(2)] === username);
+    
+    if (userIndex === -1) {
+        // Пользователь не найден на сервере, добавляем
+        data[_0xf(0)].push({
+            [_0xf(2)]: username,
+            [_0xf(3)]: currentUser.password || currentUser[_0xf(3)],
+            [_0xf(5)]: currentUser.hwid || currentUser[_0xf(5)] || '',
+            [_0xf(4)]: 'Active'
+        });
+        userIndex = data[_0xf(0)].length - 1;
+    } else {
+        // Обновляем существующего пользователя
+        data[_0xf(0)][userIndex][_0xf(4)] = 'Active';
+    }
+    
+    // Сохраняем изменения на сервере
+    const saved = await saveAPI(data);
+    
+    if (!saved) {
+        error.textContent = 'Failed to save to server. Use DirmaLoader.exe for activation.';
+        console.error('Failed to save API data - CORS restriction');
+        
+        // Активируем локально как fallback
+        currentUser.sub = 'Active';
+        const localUsers = getLocalUsers();
+        const localUserIndex = localUsers.findIndex(u => u.username === username);
+        if (localUserIndex !== -1) {
+            localUsers[localUserIndex].sub = 'Active';
+            saveLocalUsers(localUsers);
+        }
+        saveUserToCookie(currentUser);
+        updateAllButtons();
+        
+        showNotification('Key valid but activation requires DirmaLoader.exe', 'info');
+        return;
+    }
+    
+    console.log('Subscription activated on server!');
+    
+    // Обновляем локального пользователя
     currentUser.sub = 'Active';
     
     // Обновляем в локальном хранилище
     const localUsers = getLocalUsers();
-    const localUserIndex = localUsers.findIndex(u => u.username === currentUser.username);
+    const localUserIndex = localUsers.findIndex(u => u.username === username);
     if (localUserIndex !== -1) {
         localUsers[localUserIndex].sub = 'Active';
         saveLocalUsers(localUsers);
@@ -636,13 +704,13 @@ async function activateKey() {
     
     // Показываем успех
     error.style.color = '#4CAF50';
-    error.textContent = '✓ Key activated! (Local session only)';
+    error.textContent = '✓ Key activated successfully!';
     
     // Обновляем все кнопки
     updateAllButtons();
     
-    // Показываем уведомление с пояснением
-    showNotification('Subscription activated locally! Use DirmaLoader for permanent activation.', 'success');
+    // Показываем уведомление
+    showNotification('Subscription activated! Key removed from server.', 'success');
     
     setTimeout(() => {
         showAccountPanel();
