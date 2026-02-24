@@ -595,229 +595,229 @@
     </style>
 </head>
 <body>
-    <div class="grid-bg"></div>
-    <canvas id="particles-canvas"></canvas>
-    
-    <div id="orbs-container"></div>
+<div class="grid-bg"></div>
+<canvas id="particles-canvas"></canvas>
 
-    <div class="check-container">
-        <div class="logo-section">
-            <img src="Dirma.png" alt="Dirma" class="logo-img">
-            <div class="logo-text">Dirma Client</div>
-            <div class="logo-subtitle">Security Check</div>
+<div id="orbs-container"></div>
+
+<div class="check-container">
+    <div class="logo-section">
+        <img src="Dirma.png" alt="Dirma" class="logo-img">
+        <div class="logo-text">Dirma Client</div>
+        <div class="logo-subtitle">Security Check</div>
+    </div>
+
+    <div class="status-section">
+        <div class="status-title">Checking your browser...</div>
+        <div class="status-message">This process is automatic. Your browser will redirect to your requested content shortly.</div>
+    </div>
+
+    <div class="loader-section">
+        <div class="spinner-container">
+            <div class="spinner-ring"></div>
+            <div class="spinner-ring"></div>
+            <div class="spinner-ring"></div>
+            <div class="spinner-center">🛡️</div>
         </div>
 
-        <div class="status-section">
-            <div class="status-title">Checking your browser...</div>
-            <div class="status-message">This process is automatic. Your browser will redirect to your requested content shortly.</div>
-        </div>
-
-        <div class="loader-section">
-            <div class="spinner-container">
-                <div class="spinner-ring"></div>
-                <div class="spinner-ring"></div>
-                <div class="spinner-ring"></div>
-                <div class="spinner-center">🛡️</div>
+        <div class="progress-container">
+            <div class="progress-label">
+                <span id="progressText">Initializing...</span>
+                <span id="progressPercent">0%</span>
             </div>
-
-            <div class="progress-container">
-                <div class="progress-label">
-                    <span id="progressText">Initializing...</span>
-                    <span id="progressPercent">0%</span>
-                </div>
-                <div class="progress-bar-bg">
-                    <div class="progress-bar" id="progressBar"></div>
-                </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar" id="progressBar"></div>
             </div>
-        </div>
-
-        <div class="checks-list">
-            <div class="check-item" id="check1">
-                <div class="check-icon">🌐</div>
-                <div class="check-text">Checking browser</div>
-                <div class="check-status">Pending</div>
-            </div>
-            <div class="check-item" id="check2">
-                <div class="check-icon">🔒</div>
-                <div class="check-text">Verifying security</div>
-                <div class="check-status">Pending</div>
-            </div>
-            <div class="check-item" id="check3">
-                <div class="check-icon">🤖</div>
-                <div class="check-text">Detecting bots</div>
-                <div class="check-status">Pending</div>
-            </div>
-            <div class="check-item" id="check4">
-                <div class="check-icon">✅</div>
-                <div class="check-text">Finalizing</div>
-                <div class="check-status">Pending</div>
-            </div>
-        </div>
-
-        <div class="footer-text">
-            Protected by Dirma AntiDDoS System
         </div>
     </div>
 
-    <script>
-        // Infinite Particles System
-        const canvas = document.getElementById('particles-canvas');
-        const ctx = canvas.getContext('2d');
-        
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+    <div class="checks-list">
+        <div class="check-item" id="check1">
+            <div class="check-icon">🌐</div>
+            <div class="check-text">Checking browser</div>
+            <div class="check-status">Pending</div>
+        </div>
+        <div class="check-item" id="check2">
+            <div class="check-icon">🔒</div>
+            <div class="check-text">Verifying security</div>
+            <div class="check-status">Pending</div>
+        </div>
+        <div class="check-item" id="check3">
+            <div class="check-icon">🤖</div>
+            <div class="check-text">Detecting bots</div>
+            <div class="check-status">Pending</div>
+        </div>
+        <div class="check-item" id="check4">
+            <div class="check-icon">✅</div>
+            <div class="check-text">Finalizing</div>
+            <div class="check-status">Pending</div>
+        </div>
+    </div>
 
-        class Particle {
-            constructor() {
-                this.reset();
-            }
+    <div class="footer-text">
+        Protected by Dirma AntiDDoS System
+    </div>
+</div>
 
-            reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 3 + 1;
-                this.speedX = (Math.random() - 0.5) * 2;
-                this.speedY = (Math.random() - 0.5) * 2;
-                this.opacity = Math.random() * 0.5 + 0.2;
-                this.color = `rgba(87, 83, 222, ${this.opacity})`;
-            }
+<script>
+    // Infinite Particles System
+    const canvas = document.getElementById('particles-canvas');
+    const ctx = canvas.getContext('2d');
 
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-                // Wrap around screen
-                if (this.x > canvas.width) this.x = 0;
-                if (this.x < 0) this.x = canvas.width;
-                if (this.y > canvas.height) this.y = 0;
-                if (this.y < 0) this.y = canvas.height;
-            }
-
-            draw() {
-                ctx.fillStyle = this.color;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
+    class Particle {
+        constructor() {
+            this.reset();
         }
 
-        const particles = [];
-        for (let i = 0; i < 100; i++) {
-            particles.push(new Particle());
+        reset() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.size = Math.random() * 3 + 1;
+            this.speedX = (Math.random() - 0.5) * 2;
+            this.speedY = (Math.random() - 0.5) * 2;
+            this.opacity = Math.random() * 0.5 + 0.2;
+            this.color = `rgba(87, 83, 222, ${this.opacity})`;
         }
 
-        function animateParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            particles.forEach(particle => {
-                particle.update();
-                particle.draw();
-            });
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
 
-            // Draw connections
-            particles.forEach((p1, i) => {
-                particles.slice(i + 1).forEach(p2 => {
-                    const dx = p1.x - p2.x;
-                    const dy = p1.y - p2.y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-
-                    if (distance < 150) {
-                        ctx.strokeStyle = `rgba(87, 83, 222, ${0.2 * (1 - distance / 150)})`;
-                        ctx.lineWidth = 1;
-                        ctx.beginPath();
-                        ctx.moveTo(p1.x, p1.y);
-                        ctx.lineTo(p2.x, p2.y);
-                        ctx.stroke();
-                    }
-                });
-            });
-
-            requestAnimationFrame(animateParticles);
+            // Wrap around screen
+            if (this.x > canvas.width) this.x = 0;
+            if (this.x < 0) this.x = canvas.width;
+            if (this.y > canvas.height) this.y = 0;
+            if (this.y < 0) this.y = canvas.height;
         }
 
-        animateParticles();
+        draw() {
+            ctx.fillStyle = this.color;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
 
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+    const particles = [];
+    for (let i = 0; i < 100; i++) {
+        particles.push(new Particle());
+    }
+
+    function animateParticles() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        particles.forEach(particle => {
+            particle.update();
+            particle.draw();
         });
 
-        // Floating Orbs
-        const orbsContainer = document.getElementById('orbs-container');
-        for (let i = 0; i < 3; i++) {
-            const orb = document.createElement('div');
-            orb.className = 'orb';
-            orb.style.width = (Math.random() * 300 + 200) + 'px';
-            orb.style.height = orb.style.width;
-            orb.style.left = Math.random() * 100 + '%';
-            orb.style.top = Math.random() * 100 + '%';
-            orb.style.background = `radial-gradient(circle, rgba(87, 83, 222, 0.4), transparent)`;
-            orb.style.animationDelay = (i * 5) + 's';
-            orbsContainer.appendChild(orb);
+        // Draw connections
+        particles.forEach((p1, i) => {
+            particles.slice(i + 1).forEach(p2 => {
+                const dx = p1.x - p2.x;
+                const dy = p1.y - p2.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < 150) {
+                    ctx.strokeStyle = `rgba(87, 83, 222, ${0.2 * (1 - distance / 150)})`;
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(p1.x, p1.y);
+                    ctx.lineTo(p2.x, p2.y);
+                    ctx.stroke();
+                }
+            });
+        });
+
+        requestAnimationFrame(animateParticles);
+    }
+
+    animateParticles();
+
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+
+    // Floating Orbs
+    const orbsContainer = document.getElementById('orbs-container');
+    for (let i = 0; i < 3; i++) {
+        const orb = document.createElement('div');
+        orb.className = 'orb';
+        orb.style.width = (Math.random() * 300 + 200) + 'px';
+        orb.style.height = orb.style.width;
+        orb.style.left = Math.random() * 100 + '%';
+        orb.style.top = Math.random() * 100 + '%';
+        orb.style.background = `radial-gradient(circle, rgba(87, 83, 222, 0.4), transparent)`;
+        orb.style.animationDelay = (i * 5) + 's';
+        orbsContainer.appendChild(orb);
+    }
+
+    // Security Check Process
+    const checks = [
+        { id: 'check1', text: 'Checking browser', duration: 1500 },
+        { id: 'check2', text: 'Verifying security', duration: 2000 },
+        { id: 'check3', text: 'Detecting bots', duration: 1800 },
+        { id: 'check4', text: 'Finalizing', duration: 1200 }
+    ];
+
+    let currentCheck = 0;
+    let progress = 0;
+
+    function updateProgress(percent, text) {
+        document.getElementById('progressBar').style.width = percent + '%';
+        document.getElementById('progressPercent').textContent = percent + '%';
+        document.getElementById('progressText').textContent = text;
+    }
+
+    function completeCheck(checkId) {
+        const checkElement = document.getElementById(checkId);
+        checkElement.classList.add('completed');
+        checkElement.querySelector('.check-status').textContent = 'Complete';
+    }
+
+    async function runSecurityCheck() {
+        for (let i = 0; i < checks.length; i++) {
+            const check = checks[i];
+
+            // Activate check
+            document.getElementById(check.id).classList.add('active');
+            updateProgress((i / checks.length) * 100, check.text);
+
+            // Wait
+            await new Promise(resolve => setTimeout(resolve, check.duration));
+
+            // Complete check
+            completeCheck(check.id);
+            updateProgress(((i + 1) / checks.length) * 100, check.text + ' - Complete');
         }
 
-        // Security Check Process
-        const checks = [
-            { id: 'check1', text: 'Checking browser', duration: 1500 },
-            { id: 'check2', text: 'Verifying security', duration: 2000 },
-            { id: 'check3', text: 'Detecting bots', duration: 1800 },
-            { id: 'check4', text: 'Finalizing', duration: 1200 }
-        ];
+        // Redirect
+        updateProgress(100, 'Redirecting...');
+        await new Promise(resolve => setTimeout(resolve, 1000));
 
-        let currentCheck = 0;
-        let progress = 0;
+        // Store verification with timestamp
+        localStorage.setItem('ddos_check_passed', 'true');
+        localStorage.setItem('ddos_check_time', Date.now().toString());
+        window.location.href = 'index.html';
+    }
 
-        function updateProgress(percent, text) {
-            document.getElementById('progressBar').style.width = percent + '%';
-            document.getElementById('progressPercent').textContent = percent + '%';
-            document.getElementById('progressText').textContent = text;
-        }
+    // Check if already verified (within 1 hour)
+    const ddosCheckPassed = localStorage.getItem('ddos_check_passed');
+    const ddosCheckTime = localStorage.getItem('ddos_check_time');
+    const validTime = 3600000; // 1 hour
+    const now = Date.now();
 
-        function completeCheck(checkId) {
-            const checkElement = document.getElementById(checkId);
-            checkElement.classList.add('completed');
-            checkElement.querySelector('.check-status').textContent = 'Complete';
-        }
-
-        async function runSecurityCheck() {
-            for (let i = 0; i < checks.length; i++) {
-                const check = checks[i];
-                
-                // Activate check
-                document.getElementById(check.id).classList.add('active');
-                updateProgress((i / checks.length) * 100, check.text);
-                
-                // Wait
-                await new Promise(resolve => setTimeout(resolve, check.duration));
-                
-                // Complete check
-                completeCheck(check.id);
-                updateProgress(((i + 1) / checks.length) * 100, check.text + ' - Complete');
-            }
-
-            // Redirect
-            updateProgress(100, 'Redirecting...');
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            
-            // Store verification with timestamp
-            localStorage.setItem('ddos_check_passed', 'true');
-            localStorage.setItem('ddos_check_time', Date.now().toString());
-            window.location.href = 'index.html';
-        }
-
-        // Check if already verified (within 1 hour)
-        const ddosCheckPassed = localStorage.getItem('ddos_check_passed');
-        const ddosCheckTime = localStorage.getItem('ddos_check_time');
-        const validTime = 3600000; // 1 hour
-        const now = Date.now();
-        
-        if (ddosCheckPassed === 'true' && ddosCheckTime && (now - parseInt(ddosCheckTime)) < validTime) {
-            // Already verified, redirect immediately
-            window.location.href = 'index.html';
-        } else {
-            // Start check after 1 second
-            setTimeout(runSecurityCheck, 1000);
-        }
-    </script>
+    if (ddosCheckPassed === 'true' && ddosCheckTime && (now - parseInt(ddosCheckTime)) < validTime) {
+        // Already verified, redirect immediately
+        window.location.href = 'index.html';
+    } else {
+        // Start check after 1 second
+        setTimeout(runSecurityCheck, 1000);
+    }
+</script>
 </body>
 </html>

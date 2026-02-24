@@ -10,246 +10,246 @@
     <link rel="stylesheet" href="vpn-style.css">
 </head>
 <body>
-    <!-- Background Animation -->
-    <div class="background">
-        <div class="stars"></div>
-        <div class="gradient-overlay"></div>
+<!-- Background Animation -->
+<div class="background">
+    <div class="stars"></div>
+    <div class="gradient-overlay"></div>
+</div>
+
+<!-- Navigation -->
+<nav class="navbar">
+    <div class="container">
+        <div class="logo">
+            <img src="Dirma.png" alt="Dirma" class="logo-image">
+            <span class="logo-text">Dirma VPN</span>
+        </div>
+        <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="#features" onclick="closeMobileMenu()">Features</a></li>
+            <li><a href="#download" onclick="closeMobileMenu()">Download</a></li>
+            <li><a href="#pricing" onclick="closeMobileMenu()">Pricing</a></li>
+        </ul>
     </div>
+</nav>
 
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="container">
-            <div class="logo">
-                <img src="Dirma.png" alt="Dirma" class="logo-image">
-                <span class="logo-text">Dirma VPN</span>
+<!-- Hero Section -->
+<section id="home" class="hero vpn-hero-section">
+    <div class="container">
+        <div class="hero-content">
+            <div class="vpn-badge-large">🏆 Top 1 Bypass Tool</div>
+            <h1 class="hero-title">
+                <span class="gradient-text">Dirma VPN</span>
+            </h1>
+            <p class="hero-subtitle">Ultimate Protection & Bypass Solution</p>
+            <p class="hero-description">
+                Professional VPN with military-grade encryption and unbeatable bypass capabilities
+            </p>
+            <div class="hero-buttons">
+                <button class="btn btn-primary btn-vpn-hero" onclick="downloadVPN()">
+                    <span class="btn-icon">⬇</span>
+                    Download Free
+                </button>
+                <a href="#features" class="btn btn-secondary">
+                    Learn More
+                </a>
             </div>
-            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-            <ul class="nav-links" id="nav-links">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="#features" onclick="closeMobileMenu()">Features</a></li>
-                <li><a href="#download" onclick="closeMobileMenu()">Download</a></li>
-                <li><a href="#pricing" onclick="closeMobileMenu()">Pricing</a></li>
-            </ul>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section id="home" class="hero vpn-hero-section">
-        <div class="container">
-            <div class="hero-content">
-                <div class="vpn-badge-large">🏆 Top 1 Bypass Tool</div>
-                <h1 class="hero-title">
-                    <span class="gradient-text">Dirma VPN</span>
-                </h1>
-                <p class="hero-subtitle">Ultimate Protection & Bypass Solution</p>
-                <p class="hero-description">
-                    Professional VPN with military-grade encryption and unbeatable bypass capabilities
-                </p>
-                <div class="hero-buttons">
-                    <button class="btn btn-primary btn-vpn-hero" onclick="downloadVPN()">
-                        <span class="btn-icon">⬇</span>
-                        Download Free
-                    </button>
-                    <a href="#features" class="btn btn-secondary">
-                        Learn More
-                    </a>
+            <div class="hero-stats">
+                <div class="stat">
+                    <div class="stat-value">100K+</div>
+                    <div class="stat-label">Active Users</div>
                 </div>
-                <div class="hero-stats">
-                    <div class="stat">
-                        <div class="stat-value">100K+</div>
-                        <div class="stat-label">Active Users</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value">11</div>
-                        <div class="stat-label">Servers</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value">99.9%</div>
-                        <div class="stat-label">Uptime</div>
-                    </div>
+                <div class="stat">
+                    <div class="stat-value">11</div>
+                    <div class="stat-label">Servers</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">99.9%</div>
+                    <div class="stat-label">Uptime</div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Features -->
-    <section id="features" class="features vpn-features-section">
-        <div class="container">
-            <h2 class="section-title">Why Choose Dirma VPN?</h2>
-            <div class="features-grid">
-                <div class="feature-card vpn-feature-card">
-                    <div class="feature-icon">🛡️</div>
-                    <h3>Military-Grade Encryption</h3>
-                    <p>AES-256 encryption protects your data from any threats</p>
-                </div>
-                <div class="feature-card vpn-feature-card">
-                    <div class="feature-icon">⚡</div>
-                    <h3>Lightning Fast</h3>
-                    <p>Optimized servers for maximum speed without lag</p>
-                </div>
-                <div class="feature-card vpn-feature-card">
-                    <div class="feature-icon">🌍</div>
-                    <h3>11 Premium Servers</h3>
-                    <p>Carefully selected servers for best performance</p>
-                </div>
-                <div class="feature-card vpn-feature-card">
-                    <div class="feature-icon">🔓</div>
-                    <h3>Bypass Anything</h3>
-                    <p>Access any blocked content and services</p>
-                </div>
-                <div class="feature-card vpn-feature-card">
-                    <div class="feature-icon">🚫</div>
-                    <h3>No Logs Policy</h3>
-                    <p>We don't track, collect, or share your data</p>
-                </div>
-                <div class="feature-card vpn-feature-card">
-                    <div class="feature-icon">💻</div>
-                    <h3>Easy to Use</h3>
-                    <p>One-click connection, no configuration needed</p>
-                </div>
+<!-- Features -->
+<section id="features" class="features vpn-features-section">
+    <div class="container">
+        <h2 class="section-title">Why Choose Dirma VPN?</h2>
+        <div class="features-grid">
+            <div class="feature-card vpn-feature-card">
+                <div class="feature-icon">🛡️</div>
+                <h3>Military-Grade Encryption</h3>
+                <p>AES-256 encryption protects your data from any threats</p>
+            </div>
+            <div class="feature-card vpn-feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Lightning Fast</h3>
+                <p>Optimized servers for maximum speed without lag</p>
+            </div>
+            <div class="feature-card vpn-feature-card">
+                <div class="feature-icon">🌍</div>
+                <h3>11 Premium Servers</h3>
+                <p>Carefully selected servers for best performance</p>
+            </div>
+            <div class="feature-card vpn-feature-card">
+                <div class="feature-icon">🔓</div>
+                <h3>Bypass Anything</h3>
+                <p>Access any blocked content and services</p>
+            </div>
+            <div class="feature-card vpn-feature-card">
+                <div class="feature-icon">🚫</div>
+                <h3>No Logs Policy</h3>
+                <p>We don't track, collect, or share your data</p>
+            </div>
+            <div class="feature-card vpn-feature-card">
+                <div class="feature-icon">💻</div>
+                <h3>Easy to Use</h3>
+                <p>One-click connection, no configuration needed</p>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- How It Works -->
-    <section class="how-it-works">
-        <div class="container">
-            <h2 class="section-title">How It Works</h2>
-            <div class="steps-grid">
-                <div class="step-card">
-                    <div class="step-number">1</div>
-                    <h3>Download</h3>
-                    <p>Get DirmaVPN.exe from our website</p>
-                </div>
-                <div class="step-card">
-                    <div class="step-number">2</div>
-                    <h3>Install</h3>
-                    <p>Run the installer and follow simple steps</p>
-                </div>
-                <div class="step-card">
-                    <div class="step-number">3</div>
-                    <h3>Connect</h3>
-                    <p>Click connect and enjoy secure browsing</p>
-                </div>
+<!-- How It Works -->
+<section class="how-it-works">
+    <div class="container">
+        <h2 class="section-title">How It Works</h2>
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <h3>Download</h3>
+                <p>Get DirmaVPN.exe from our website</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <h3>Install</h3>
+                <p>Run the installer and follow simple steps</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <h3>Connect</h3>
+                <p>Click connect and enjoy secure browsing</p>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Download Section -->
-    <section id="download" class="download vpn-download-section">
-        <div class="container">
-            <h2 class="section-title">Download Dirma VPN</h2>
-            <div class="vpn-download-main">
-                <div class="vpn-download-info">
-                    <h3>Free for All Users</h3>
-                    <p class="vpn-download-desc">Get unlimited access to all features completely free</p>
-                    <ul class="vpn-features-list">
-                        <li>✓ Unlimited bandwidth</li>
-                        <li>✓ 11 premium servers</li>
-                        <li>✓ No speed limits</li>
-                        <li>✓ No logs policy</li>
-                        <li>✓ Requires Java 25+</li>
-                        <li>✓ One-click connect</li>
-                    </ul>
-                </div>
-                <div class="vpn-download-action">
-                    <div class="vpn-download-box">
-                        <div class="vpn-icon-large">🔒</div>
-                        <h4>Dirma VPN</h4>
-                        <p class="version-text">Version 1.0.0</p>
-                        <button class="btn btn-primary btn-download-large" onclick="downloadVPN()">
-                            <span class="btn-icon">⬇</span>
-                            Download for Windows
-                        </button>
-                        <p class="download-size">Size: ~2 MB</p>
-                        <div class="download-requirements">
-                            <p>Requirements:</p>
-                            <ul>
-                                <li>Windows 7 or higher</li>
-                                <li>Java 25 or higher</li>
-                                <li>Internet connection</li>
-                            </ul>
-                            <a href="https://download.oracle.com/java/25/latest/jdk-25_windows-x64_bin.exe" class="java-download-link-small" target="_blank">
-                                <span class="java-icon">☕</span>
-                                Download JDK 25
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Pricing -->
-    <section id="pricing" class="pricing">
-        <div class="container">
-            <h2 class="section-title">Simple Pricing</h2>
-            <div class="pricing-card">
-                <div class="pricing-badge">100% FREE</div>
-                <h3>Free Forever</h3>
-                <div class="pricing-price">
-                    <span class="price-amount">$0</span>
-                    <span class="price-period">/forever</span>
-                </div>
-                <ul class="pricing-features">
+<!-- Download Section -->
+<section id="download" class="download vpn-download-section">
+    <div class="container">
+        <h2 class="section-title">Download Dirma VPN</h2>
+        <div class="vpn-download-main">
+            <div class="vpn-download-info">
+                <h3>Free for All Users</h3>
+                <p class="vpn-download-desc">Get unlimited access to all features completely free</p>
+                <ul class="vpn-features-list">
                     <li>✓ Unlimited bandwidth</li>
                     <li>✓ 11 premium servers</li>
-                    <li>✓ Maximum speed</li>
-                    <li>✓ No ads</li>
-                    <li>✓ Requires Java 25</li>
-                    <li>✓ Regular updates</li>
+                    <li>✓ No speed limits</li>
+                    <li>✓ No logs policy</li>
+                    <li>✓ Requires Java 25+</li>
+                    <li>✓ One-click connect</li>
                 </ul>
-                <button class="btn btn-primary btn-pricing" onclick="downloadVPN()">
-                    Get Started Free
-                </button>
             </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
+            <div class="vpn-download-action">
+                <div class="vpn-download-box">
+                    <div class="vpn-icon-large">🔒</div>
                     <h4>Dirma VPN</h4>
-                    <p>Top 1 bypass tool for ultimate protection</p>
+                    <p class="version-text">Version 1.0.0</p>
+                    <button class="btn btn-primary btn-download-large" onclick="downloadVPN()">
+                        <span class="btn-icon">⬇</span>
+                        Download for Windows
+                    </button>
+                    <p class="download-size">Size: ~2 MB</p>
+                    <div class="download-requirements">
+                        <p>Requirements:</p>
+                        <ul>
+                            <li>Windows 7 or higher</li>
+                            <li>Java 25 or higher</li>
+                            <li>Internet connection</li>
+                        </ul>
+                        <a href="https://download.oracle.com/java/25/latest/jdk-25_windows-x64_bin.exe" class="java-download-link-small" target="_blank">
+                            <span class="java-icon">☕</span>
+                            Download JDK 25
+                        </a>
+                    </div>
                 </div>
-                <div class="footer-section">
-                    <h4>Product</h4>
-                    <ul>
-                        <li><a href="#features">Features</a></li>
-                        <li><a href="#download">Download</a></li>
-                        <li><a href="#pricing">Pricing</a></li>
-                        <li><a href="index.html">Dirma Client</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Community</h4>
-                    <ul>
-                        <li><a href="https://discord.gg/b7NMFqJZBP" target="_blank">Discord</a></li>
-                        <li><a href="https://www.youtube.com/@Darkos1s" target="_blank">YouTube</a></li>
-                        <li><a href="#">GitHub</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Support</h4>
-                    <ul>
-                        <li><a href="https://discord.gg/b7NMFqJZBP" target="_blank">Discord Support</a></li>
-                        <li><a href="#">Documentation</a></li>
-                        <li><a href="index.html">Main Site</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 Dirma VPN. All rights reserved.</p>
             </div>
         </div>
-    </footer>
+    </div>
+</section>
 
-    <script src="script.js"></script>
+<!-- Pricing -->
+<section id="pricing" class="pricing">
+    <div class="container">
+        <h2 class="section-title">Simple Pricing</h2>
+        <div class="pricing-card">
+            <div class="pricing-badge">100% FREE</div>
+            <h3>Free Forever</h3>
+            <div class="pricing-price">
+                <span class="price-amount">$0</span>
+                <span class="price-period">/forever</span>
+            </div>
+            <ul class="pricing-features">
+                <li>✓ Unlimited bandwidth</li>
+                <li>✓ 11 premium servers</li>
+                <li>✓ Maximum speed</li>
+                <li>✓ No ads</li>
+                <li>✓ Requires Java 25</li>
+                <li>✓ Regular updates</li>
+            </ul>
+            <button class="btn btn-primary btn-pricing" onclick="downloadVPN()">
+                Get Started Free
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Dirma VPN</h4>
+                <p>Top 1 bypass tool for ultimate protection</p>
+            </div>
+            <div class="footer-section">
+                <h4>Product</h4>
+                <ul>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#download">Download</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="index.html">Dirma Client</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Community</h4>
+                <ul>
+                    <li><a href="https://discord.gg/b7NMFqJZBP" target="_blank">Discord</a></li>
+                    <li><a href="https://www.youtube.com/@Darkos1s" target="_blank">YouTube</a></li>
+                    <li><a href="#">GitHub</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="https://discord.gg/b7NMFqJZBP" target="_blank">Discord Support</a></li>
+                    <li><a href="#">Documentation</a></li>
+                    <li><a href="index.html">Main Site</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Dirma VPN. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="script.js"></script>
 </body>
 </html>
