@@ -32,14 +32,11 @@ document.querySelectorAll('.faq-question').forEach(question => {
 
 // Функция скачивания лоадера
 function downloadLoader() {
-    // Определяем, какой файл скачивать
-    const loaderUrl = './DirmaLoader.exe'; // По умолчанию EXE
+    const loaderUrl = './DirmaLoader.exe';
     const fileName = 'DirmaLoader.exe';
     
-    // Показываем уведомление
     showNotification('Download started!', 'success');
     
-    // Создаём временную ссылку для скачивания
     const link = document.createElement('a');
     link.href = loaderUrl;
     link.download = fileName;
@@ -47,10 +44,8 @@ function downloadLoader() {
     link.click();
     document.body.removeChild(link);
     
-    // Отправляем статистику (опционально)
     trackDownload();
     
-    // Показываем инструкцию
     setTimeout(() => {
         showNotification('Don\'t forget to install Java 25!', 'info');
     }, 2000);
@@ -119,9 +114,8 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// Отслеживание скачиваний (опционально)
+// Отслеживание скачиваний
 function trackDownload() {
-    // Здесь можно добавить отправку статистики на сервер
     console.log('Download tracked:', new Date().toISOString());
 }
 
@@ -201,11 +195,10 @@ function detectOS() {
     return 'Unknown';
 }
 
-// Счётчик загрузок (демо)
+// Счётчик загрузок
 let downloadCount = 10247;
 const statValue = document.querySelector('.stat-value');
 if (statValue && statValue.textContent.includes('10K+')) {
-    // Анимация счётчика
     let current = 0;
     const target = downloadCount;
     const increment = target / 100;
@@ -245,22 +238,18 @@ function checkCaptcha() {
     }
     
     if (userAnswer === captchaAnswer) {
-        // Правильный ответ
         const overlay = document.getElementById('captcha-overlay');
         overlay.style.animation = 'fadeOut 0.3s ease';
         setTimeout(() => {
             overlay.classList.add('hidden');
-            // Сохраняем в localStorage что капча пройдена
             localStorage.setItem('captcha_passed', 'true');
             localStorage.setItem('captcha_time', Date.now().toString());
         }, 300);
     } else {
-        // Неправильный ответ
         error.textContent = 'Wrong answer. Try again.';
         input.style.borderColor = '#ff6b6b';
         input.value = '';
         
-        // Генерируем новый пример
         setTimeout(() => {
             generateCaptcha();
             error.textContent = '';
@@ -275,18 +264,14 @@ window.addEventListener('load', () => {
     const captchaTime = localStorage.getItem('captcha_time');
     const overlay = document.getElementById('captcha-overlay');
     
-    // Капча действительна 24 часа
     const validTime = 24 * 60 * 60 * 1000;
     const now = Date.now();
     
     if (captchaPassed === 'true' && captchaTime && (now - parseInt(captchaTime)) < validTime) {
-        // Капча уже пройдена и еще действительна
         overlay.classList.add('hidden');
     } else {
-        // Показываем капчу
         generateCaptcha();
         
-        // Обработка Enter
         document.getElementById('captcha-input').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 checkCaptcha();
@@ -306,16 +291,13 @@ fadeOutStyle.textContent = `
 document.head.appendChild(fadeOutStyle);
 
 // ==================== СИСТЕМА АККАУНТОВ ====================
-// Обфусцированные данные - многоуровневое шифрование
 const _0x5f2a = 'aHR0cHM6Ly9hcGkubnBvaW50LmlvLzhiY2UxZDZmMGU2ODIyMjM3ODQ1';
 const _0x7d4e = ['users','keys','username','password','sub','hwid'];
 
-// Декодирование URL
 function _0xurl() {
     return atob(_0x5f2a);
 }
 
-// Получение имени поля
 function _0xf(index) {
     return _0x7d4e[index];
 }
@@ -375,7 +357,6 @@ async function login() {
         return;
     }
     
-    // Успешный вход
     currentUser = user;
     localStorage.setItem('dirma_user', JSON.stringify(user));
     showAccountPanel();
@@ -418,13 +399,11 @@ async function register() {
         return;
     }
     
-    // Проверка существования пользователя
     if (data[_0xf(0)].find(u => u[_0xf(2)] === username)) {
         error.textContent = 'User with this name already exists';
         return;
     }
     
-    // Создание нового пользователя
     const newUser = {
         [_0xf(2)]: username,
         [_0xf(3)]: password,
@@ -440,7 +419,6 @@ async function register() {
         return;
     }
     
-    // Автоматический вход
     currentUser = newUser;
     localStorage.setItem('dirma_user', JSON.stringify(newUser));
     showAccountPanel();
@@ -471,7 +449,6 @@ async function activateKey() {
         return;
     }
     
-    // Проверка существования ключа
     const keyIndex = data[_0xf(1)].indexOf(key);
     
     if (keyIndex === -1) {
@@ -479,10 +456,8 @@ async function activateKey() {
         return;
     }
     
-    // Удаление ключа из списка
     data[_0xf(1)].splice(keyIndex, 1);
     
-    // Активация подписки
     const userIndex = data[_0xf(0)].findIndex(u => u[_0xf(2)] === currentUser[_0xf(2)]);
     if (userIndex !== -1) {
         data[_0xf(0)][userIndex][_0xf(4)] = 'Active';
@@ -498,7 +473,6 @@ async function activateKey() {
     
     localStorage.setItem('dirma_user', JSON.stringify(currentUser));
     
-    // Показываем успех
     error.style.color = '#4CAF50';
     error.textContent = 'Key successfully activated!';
     
@@ -603,12 +577,10 @@ function updateAccountButton() {
 
 // Проверка авторизации при загрузке
 window.addEventListener('load', () => {
-    // Показываем кнопку аккаунта после прохождения капчи
     setTimeout(() => {
         document.getElementById('account-button').classList.remove('hidden');
     }, 500);
     
-    // Проверяем сохраненного пользователя
     const savedUser = localStorage.getItem('dirma_user');
     if (savedUser) {
         try {
