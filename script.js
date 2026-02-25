@@ -395,6 +395,50 @@ async function activateKey() {
         return;
     }
     
+    // Проверяем является ли это HWID reset ключом
+    const isHwidKey = data.hwidkey && data.hwidkey.includes(key);
+    
+    if (isHwidKey) {
+        // HWID Reset Key
+        const userIndex = data[_0xf(0)].findIndex(u => u[_0xf(2)] === currentUser[_0xf(2)]);
+        if (userIndex !== -1) {
+            data[_0xf(0)][userIndex][_0xf(5)] = ''; // Очищаем HWID
+            currentUser[_0xf(5)] = '';
+        }
+        
+        const saved = await saveAPI(data);
+        
+        if (!saved) {
+            error.textContent = 'Data save error';
+            return;
+        }
+        
+        saveUserToCookie(currentUser);
+        
+        error.style.color = '#4CAF50';
+        error.textContent = 'HWID successfully reset!';
+        
+        // Меняем фон на зеленый
+        const activateForm = document.getElementById('activate-form');
+        activateForm.style.transition = 'background 0.5s ease';
+        activateForm.style.background = 'linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(102, 187, 106, 0.1) 100%)';
+        
+        updateAccountButton();
+        
+        // Обновляем отображение HWID
+        document.getElementById('account-hwid').textContent = 'Not bound yet';
+        
+        setTimeout(() => {
+            showAccountPanel();
+            error.style.color = '#ff6b6b';
+            error.textContent = '';
+            activateForm.style.background = '';
+        }, 2000);
+        
+        return;
+    }
+    
+    // Обычный ключ активации
     const keyIndex = data[_0xf(1)].indexOf(key);
     
     if (keyIndex === -1) {
@@ -417,17 +461,24 @@ async function activateKey() {
         return;
     }
     
-    saveUserToCookie(currentUser); // Сохраняем в Cookie
+    saveUserToCookie(currentUser);
     
     error.style.color = '#4CAF50';
     error.textContent = 'Key successfully activated!';
     
+    // Меняем фон на зеленый
+    const activateForm = document.getElementById('activate-form');
+    activateForm.style.transition = 'background 0.5s ease';
+    activateForm.style.background = 'linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(102, 187, 106, 0.1) 100%)';
+    
     updateAccountButton();
+    updateNavLoginButton();
     
     setTimeout(() => {
         showAccountPanel();
         error.style.color = '#ff6b6b';
         error.textContent = '';
+        activateForm.style.background = '';
     }, 2000);
 }
 
@@ -456,6 +507,7 @@ function showLogin() {
     document.getElementById('register-form').classList.add('hidden');
     document.getElementById('activate-form').classList.add('hidden');
     document.getElementById('account-panel').classList.add('hidden');
+    document.getElementById('change-password-form')?.classList.add('hidden');
 }
 
 function showRegister() {
@@ -463,6 +515,7 @@ function showRegister() {
     document.getElementById('register-form').classList.remove('hidden');
     document.getElementById('activate-form').classList.add('hidden');
     document.getElementById('account-panel').classList.add('hidden');
+    document.getElementById('change-password-form')?.classList.add('hidden');
 }
 
 function showActivateForm() {
@@ -470,6 +523,86 @@ function showActivateForm() {
     document.getElementById('register-form').classList.add('hidden');
     document.getElementById('activate-form').classList.remove('hidden');
     document.getElementById('account-panel').classList.add('hidden');
+    document.getElementById('change-password-form')?.classList.add('hidden');
+}
+
+function showChangePassword() {
+    document.getElementById('login-form').classList.add('hidden');
+    document.getElementById('register-form').classList.add('hidden');
+    document.getElementById('activate-form').classList.add('hidden');
+    document.getElementById('account-panel').classList.add('hidden');
+    document.getElementById('change-password-form').classList.remove('hidden');
+}
+
+async function changePassword() {
+    const oldPassword = document.getElementById('change-old-password').value;
+    const newPassword = document.getElementById('change-new-password').value;
+    const newPassword2 = document.getElementById('change-new-password2').value;
+    const error = document.getElementById('change-password-error');
+    
+    if (!oldPassword || !newPassword || !newPassword2) {
+        error.textContent = 'Fill in all fields';
+        return;
+    }
+    
+    if (newPassword !== newPassword2) {
+        error.textContent = 'New passwords do not match';
+        return;
+    }
+    
+    if (newPassword.length < 6) {
+        error.textContent = 'New password must be at least 6 characters';
+        return;
+    }
+    
+    if (!currentUser) {
+        error.textContent = 'You must be logged in';
+        return;
+    }
+    
+    // Проверяем старый пароль
+    if (currentUser[_0xf(3)] !== oldPassword && currentUser.password !== oldPassword) {
+        error.textContent = 'Current password is incorrect';
+        return;
+    }
+    
+    error.textContent = 'Changing password...';
+    const data = await fetchAPI();
+    
+    if (!data) {
+        error.textContent = 'Server connection error';
+        return;
+    }
+    
+    const userIndex = data[_0xf(0)].findIndex(u => u[_0xf(2)] === currentUser[_0xf(2)]);
+    if (userIndex !== -1) {
+        data[_0xf(0)][userIndex][_0xf(3)] = newPassword;
+        currentUser[_0xf(3)] = newPassword;
+        if (currentUser.password) currentUser.password = newPassword;
+    }
+    
+    const saved = await saveAPI(data);
+    
+    if (!saved) {
+        error.textContent = 'Data save error';
+        return;
+    }
+    
+    saveUserToCookie(currentUser);
+    
+    error.style.color = '#4CAF50';
+    error.textContent = 'Password successfully changed!';
+    
+    // Очищаем поля
+    document.getElementById('change-old-password').value = '';
+    document.getElementById('change-new-password').value = '';
+    document.getElementById('change-new-password2').value = '';
+    
+    setTimeout(() => {
+        showAccountPanel();
+        error.style.color = '#ff6b6b';
+        error.textContent = '';
+    }, 2000);
 }
 
 function showAccountPanel() {
@@ -482,6 +615,7 @@ function showAccountPanel() {
     document.getElementById('register-form').classList.add('hidden');
     document.getElementById('activate-form').classList.add('hidden');
     document.getElementById('account-panel').classList.remove('hidden');
+    document.getElementById('change-password-form')?.classList.add('hidden');
     
     document.getElementById('account-username').textContent = currentUser[_0xf(2)];
     
@@ -577,6 +711,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     document.getElementById('activate-key')?.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') activateKey();
+    });
+    
+    document.getElementById('change-new-password2')?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') changePassword();
     });
 });
 

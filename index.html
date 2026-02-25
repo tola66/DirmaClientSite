@@ -173,9 +173,39 @@
                     <span class="btn-icon">🔑</span>
                     Activate Key
                 </button>
+                <button class="btn btn-secondary auth-submit" onclick="showChangePassword()">
+                    <span class="btn-icon">🔒</span>
+                    Change Password
+                </button>
                 <button class="btn btn-secondary auth-submit" onclick="logout()">
                     <span class="btn-icon">←</span>
                     Logout
+                </button>
+            </div>
+        </div>
+
+        <!-- Change Password Form -->
+        <div id="change-password-form" class="auth-form hidden">
+            <div class="auth-header">
+                <div class="auth-logo">
+                    <span class="logo-icon">D</span>
+                    <span class="logo-text">Dirma Client</span>
+                </div>
+                <h2>Change Password</h2>
+                <p>Enter your current and new password</p>
+            </div>
+            <div class="auth-content">
+                <input type="password" id="change-old-password" class="auth-input" placeholder="Current Password" autocomplete="current-password">
+                <input type="password" id="change-new-password" class="auth-input" placeholder="New Password" autocomplete="new-password">
+                <input type="password" id="change-new-password2" class="auth-input" placeholder="Confirm New Password" autocomplete="new-password">
+                <div id="change-password-error" class="auth-error"></div>
+                <button class="btn btn-primary auth-submit" onclick="changePassword()">
+                    <span class="btn-icon">✓</span>
+                    Change Password
+                </button>
+                <button class="btn btn-secondary auth-submit" onclick="showAccountPanel()">
+                    <span class="btn-icon">←</span>
+                    Back
                 </button>
             </div>
         </div>
