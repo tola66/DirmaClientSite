@@ -262,7 +262,12 @@ let currentUser = null;
 
 async function fetchAPI() {
     try {
-        const response = await fetch(API_URL);
+        const response = await fetch(API_URL, {
+            cache: 'no-cache',
+            headers: {
+                'Cache-Control': 'no-cache'
+            }
+        });
         return await response.json();
     } catch (error) {
         console.error('API Error:', error);
