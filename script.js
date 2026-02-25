@@ -17,11 +17,11 @@ document.querySelectorAll('.faq-question').forEach(question => {
     question.addEventListener('click', () => {
         const faqItem = question.parentElement;
         const isActive = faqItem.classList.contains('active');
-
+        
         document.querySelectorAll('.faq-item').forEach(item => {
             item.classList.remove('active');
         });
-
+        
         if (!isActive) {
             faqItem.classList.add('active');
         }
@@ -32,18 +32,18 @@ document.querySelectorAll('.faq-question').forEach(question => {
 function downloadLoader() {
     const loaderUrl = './DirmaLoader.exe';
     const fileName = 'DirmaLoader.exe';
-
+    
     showNotification('Download started!', 'success');
-
+    
     const link = document.createElement('a');
     link.href = loaderUrl;
     link.download = fileName;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-
+    
     trackDownload();
-
+    
     setTimeout(() => {
         showNotification('Don\'t forget to install Java 25!', 'info');
     }, 2000);
@@ -54,7 +54,7 @@ function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
     notification.textContent = message;
-
+    
     notification.style.cssText = `
         position: fixed;
         top: 100px;
@@ -67,9 +67,9 @@ function showNotification(message, type = 'info') {
         z-index: 10000;
         animation: slideIn 0.3s ease;
     `;
-
+    
     document.body.appendChild(notification);
-
+    
     setTimeout(() => {
         notification.style.animation = 'slideOut 0.3s ease';
         setTimeout(() => {
@@ -90,7 +90,7 @@ style.textContent = `
             opacity: 1;
         }
     }
-
+    
     @keyframes slideOut {
         from {
             transform: translateX(0);
@@ -195,13 +195,13 @@ function checkCaptcha() {
     const input = document.getElementById('captcha-input');
     const error = document.getElementById('captcha-error');
     const userAnswer = parseInt(input.value);
-
+    
     if (isNaN(userAnswer)) {
         error.textContent = 'Please enter a number';
         input.style.borderColor = '#ff6b6b';
         return;
     }
-
+    
     if (userAnswer === captchaAnswer) {
         const overlay = document.getElementById('captcha-overlay');
         overlay.style.animation = 'fadeOut 0.3s ease';
@@ -226,10 +226,10 @@ window.addEventListener('load', () => {
     const captchaPassed = localStorage.getItem('captcha_passed');
     const captchaTime = localStorage.getItem('captcha_time');
     const overlay = document.getElementById('captcha-overlay');
-
+    
     const validTime = 24 * 60 * 60 * 1000;
     const now = Date.now();
-
+    
     if (captchaPassed === 'true' && captchaTime && (now - parseInt(captchaTime)) < validTime) {
         overlay.classList.add('hidden');
     } else {
@@ -283,31 +283,32 @@ async function login() {
     const username = document.getElementById('login-username').value.trim();
     const password = document.getElementById('login-password').value;
     const error = document.getElementById('login-error');
-
+    
     if (!username || !password) {
         error.textContent = 'Fill in all fields';
         return;
     }
-
+    
     error.textContent = 'Checking...';
     const data = await fetchAPI();
-
+    
     if (!data) {
         error.textContent = 'Server connection error';
         return;
     }
-
+    
     const user = data[_0xf(0)].find(u => u[_0xf(2)] === username && u[_0xf(3)] === password);
-
+    
     if (!user) {
         error.textContent = 'Invalid username or password';
         return;
     }
-
+    
     currentUser = user;
-    localStorage.setItem('dirma_user', JSON.stringify(user));
+    saveUserToCookie(user); // Сохраняем в Cookie вместо localStorage
+    console.log('User logged in and saved:', user);
     showAccountPanel();
-    updateAccountButton();
+    updateAllButtons();
     error.textContent = '';
 }
 
@@ -316,113 +317,113 @@ async function register() {
     const password = document.getElementById('register-password').value;
     const password2 = document.getElementById('register-password2').value;
     const error = document.getElementById('register-error');
-
+    
     if (!username || !password || !password2) {
         error.textContent = 'Fill in all fields';
         return;
     }
-
+    
     if (password !== password2) {
         error.textContent = 'Passwords do not match';
         return;
     }
-
+    
     if (username.length < 3) {
         error.textContent = 'Username must be at least 3 characters';
         return;
     }
-
+    
     if (password.length < 6) {
         error.textContent = 'Password must be at least 6 characters';
         return;
     }
-
+    
     error.textContent = 'Registering...';
     const data = await fetchAPI();
-
+    
     if (!data) {
         error.textContent = 'Server connection error';
         return;
     }
-
+    
     if (data[_0xf(0)].find(u => u[_0xf(2)] === username)) {
         error.textContent = 'User with this name already exists';
         return;
     }
-
+    
     const newUser = {
         [_0xf(2)]: username,
         [_0xf(3)]: password,
         [_0xf(5)]: '',
         [_0xf(4)]: 'Expired'
     };
-
+    
     data[_0xf(0)].push(newUser);
     const saved = await saveAPI(data);
-
+    
     if (!saved) {
         error.textContent = 'Data save error';
         return;
     }
-
+    
     currentUser = newUser;
-    localStorage.setItem('dirma_user', JSON.stringify(newUser));
+    saveUserToCookie(newUser); // Сохраняем в Cookie
     showAccountPanel();
-    updateAccountButton();
+    updateAllButtons();
     error.textContent = '';
 }
 
 async function activateKey() {
     const key = document.getElementById('activate-key').value.trim().toUpperCase();
     const error = document.getElementById('activate-error');
-
+    
     if (!key) {
         error.textContent = 'Enter key';
         return;
     }
-
+    
     if (!currentUser) {
         error.textContent = 'Sign in to your account';
         return;
     }
-
+    
     error.textContent = 'Checking key...';
     const data = await fetchAPI();
-
+    
     if (!data) {
         error.textContent = 'Server connection error';
         return;
     }
-
+    
     const keyIndex = data[_0xf(1)].indexOf(key);
-
+    
     if (keyIndex === -1) {
         error.textContent = 'Invalid key';
         return;
     }
-
+    
     data[_0xf(1)].splice(keyIndex, 1);
-
+    
     const userIndex = data[_0xf(0)].findIndex(u => u[_0xf(2)] === currentUser[_0xf(2)]);
     if (userIndex !== -1) {
         data[_0xf(0)][userIndex][_0xf(4)] = 'Active';
         currentUser[_0xf(4)] = 'Active';
     }
-
+    
     const saved = await saveAPI(data);
-
+    
     if (!saved) {
         error.textContent = 'Data save error';
         return;
     }
-
-    localStorage.setItem('dirma_user', JSON.stringify(currentUser));
-
+    
+    saveUserToCookie(currentUser); // Сохраняем в Cookie
+    
     error.style.color = '#4CAF50';
     error.textContent = 'Key successfully activated!';
-
+    
     updateAccountButton();
-
+    
     setTimeout(() => {
         showAccountPanel();
         error.style.color = '#ff6b6b';
@@ -431,10 +432,23 @@ async function activateKey() {
 }
 
 function logout() {
+    console.log('Logout function called');
+    console.log('Current user before logout:', currentUser);
+    
     currentUser = null;
-    localStorage.removeItem('dirma_user');
-    updateAccountButton();
+    removeUserFromCookie(); // Удаляем Cookie вместо localStorage
+    
+    console.log('User logged out, currentUser is now:', currentUser);
+    console.log('Calling updateAllButtons...');
+    
+    updateAllButtons();
     closeAuth();
+    
+    // Принудительно обновляем кнопку еще раз через небольшую задержку
+    setTimeout(() => {
+        console.log('Delayed update...');
+        updateAllButtons();
+    }, 100);
 }
 
 function showLogin() {
@@ -463,18 +477,18 @@ function showAccountPanel() {
         showLogin();
         return;
     }
-
+    
     document.getElementById('login-form').classList.add('hidden');
     document.getElementById('register-form').classList.add('hidden');
     document.getElementById('activate-form').classList.add('hidden');
     document.getElementById('account-panel').classList.remove('hidden');
-
+    
     document.getElementById('account-username').textContent = currentUser[_0xf(2)];
-
+    
     const statusEl = document.getElementById('account-status');
     statusEl.textContent = `Subscription: ${currentUser[_0xf(4)]}`;
     statusEl.className = 'account-status ' + (currentUser[_0xf(4)] === 'Active' ? 'active' : 'expired');
-
+    
     const hwidEl = document.getElementById('account-hwid');
     const hwid = currentUser[_0xf(5)] || '';
     if (hwid && hwid.length > 0) {
@@ -500,13 +514,22 @@ function closeAuth() {
 function updateAccountButton() {
     const button = document.getElementById('account-button');
     const text = document.getElementById('account-button-text');
-
+    
+    if (!button || !text) {
+        console.warn('account-button or account-button-text not found');
+        return;
+    }
+    
     if (currentUser) {
-        text.textContent = currentUser[_0xf(2)];
-        button.style.background = currentUser[_0xf(4)] === 'Active'
+        const username = currentUser[_0xf(2)] || currentUser.username;
+        const sub = currentUser[_0xf(4)] || currentUser.sub;
+        console.log('Updating account button with username:', username);
+        text.textContent = username;
+        button.style.background = sub === 'Active' 
             ? 'linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%)'
             : 'linear-gradient(135deg, #ff6b6b 0%, #ff8787 100%)';
     } else {
+        console.log('No user, setting account button to Login');
         text.textContent = 'Login';
         button.style.background = 'var(--gradient-1)';
     }
@@ -514,17 +537,32 @@ function updateAccountButton() {
 
 window.addEventListener('load', () => {
     setTimeout(() => {
-        document.getElementById('account-button').classList.remove('hidden');
+        document.getElementById('account-button')?.classList.remove('hidden');
     }, 500);
-
-    const savedUser = localStorage.getItem('dirma_user');
-    if (savedUser) {
+    
+    // Миграция со старого localStorage на Cookie
+    const oldUser = localStorage.getItem('dirma_user');
+    if (oldUser) {
         try {
-            currentUser = JSON.parse(savedUser);
-            updateAccountButton();
+            const user = JSON.parse(oldUser);
+            saveUserToCookie(user);
+            localStorage.removeItem('dirma_user');
+            console.log('Migrated user from localStorage to cookie');
         } catch (e) {
+            console.error('Migration error:', e);
             localStorage.removeItem('dirma_user');
         }
+    }
+    
+    // Загружаем пользователя из Cookie
+    const savedUser = loadUserFromCookie();
+    if (savedUser) {
+        currentUser = savedUser;
+        console.log('Loaded user from cookie Dirma_ID:', currentUser);
+        updateAllButtons();
+    } else {
+        console.log('No saved user found in cookie');
+        updateAllButtons(); // Обновляем кнопки даже если нет пользователя
     }
 });
 
@@ -532,11 +570,11 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('login-password')?.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') login();
     });
-
+    
     document.getElementById('register-password2')?.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') register();
     });
-
+    
     document.getElementById('activate-key')?.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') activateKey();
     });
@@ -569,4 +607,226 @@ function downloadVPN() {
     setTimeout(() => {
         showNotification('Run DirmaVPN.exe to start protection', 'info');
     }, 2000);
+}
+
+
+// Обновление кнопки логина в навбаре
+function updateNavLoginButton() {
+    const navBtn = document.getElementById('nav-login-btn');
+    if (!navBtn) {
+        console.warn('nav-login-btn not found');
+        return;
+    }
+    
+    if (currentUser) {
+        const username = currentUser[_0xf(2)] || currentUser.username;
+        const sub = currentUser[_0xf(4)] || currentUser.sub;
+        
+        console.log('Updating nav button with username:', username, 'sub:', sub);
+        navBtn.textContent = username;
+        
+        // Меняем цвет в зависимости от подписки
+        if (sub === 'Active') {
+            navBtn.style.cssText = 'background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%) !important; color: white !important;';
+        } else {
+            navBtn.style.cssText = 'background: linear-gradient(135deg, #ff6b6b 0%, #ff8787 100%) !important; color: white !important;';
+        }
+    } else {
+        console.log('No user, setting Login text');
+        navBtn.textContent = 'Login';
+        navBtn.style.cssText = ''; // Убираем inline стили, вернется CSS по умолчанию
+    }
+}
+
+// Обновляем обе кнопки
+function updateAllButtons() {
+    console.log('updateAllButtons called, currentUser:', currentUser);
+    updateAccountButton();
+    updateNavLoginButton();
+    console.log('Both buttons updated');
+}
+
+
+// COOKIE FUNCTIONS
+function setCookie(name, value, days) {
+    let expires = "";
+    if (days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Strict";
+}
+
+function getCookie(name) {
+    const nameEQ = name + "=";
+    const ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+}
+
+function deleteCookie(name) {
+    document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
+
+function saveUserToCookie(user) {
+    const userData = JSON.stringify(user);
+    const encoded = btoa(userData);
+    setCookie('Dirma_ID', encoded, 30); // 30 дней
+    console.log('User saved to cookie Dirma_ID');
+}
+
+function loadUserFromCookie() {
+    const encoded = getCookie('Dirma_ID');
+    if (!encoded) return null;
+    
+    try {
+        const userData = atob(encoded);
+        return JSON.parse(userData);
+    } catch (e) {
+        deleteCookie('Dirma_ID');
+        return null;
+    }
+}
+
+function removeUserFromCookie() {
+    deleteCookie('Dirma_ID');
+    console.log('Cookie Dirma_ID removed');
+}
+
+
+// БЕСКОНЕЧНЫЕ ЧАСТИЦЫ НА ЗАДНЕМ ФОНЕ
+const canvas = document.getElementById('particles-canvas');
+if (canvas) {
+    const ctx = canvas.getContext('2d');
+    
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    class Particle {
+        constructor() {
+            this.reset();
+        }
+
+        reset() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.size = Math.random() * 2.5 + 0.5;
+            this.speedX = (Math.random() - 0.5) * 1.5;
+            this.speedY = (Math.random() - 0.5) * 1.5;
+            this.opacity = Math.random() * 0.4 + 0.1;
+            this.color = `rgba(87, 83, 222, ${this.opacity})`;
+        }
+
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+
+            // Wrap around screen (бесконечность)
+            if (this.x > canvas.width) this.x = 0;
+            if (this.x < 0) this.x = canvas.width;
+            if (this.y > canvas.height) this.y = 0;
+            if (this.y < 0) this.y = canvas.height;
+        }
+
+        draw() {
+            ctx.fillStyle = this.color;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    // Адаптивное количество частиц
+    function getParticleCount() {
+        const width = window.innerWidth;
+        if (width < 480) return 40;
+        if (width < 768) return 60;
+        return 80;
+    }
+
+    const particles = [];
+    for (let i = 0; i < getParticleCount(); i++) {
+        particles.push(new Particle());
+    }
+
+    function animateParticles() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        particles.forEach(particle => {
+            particle.update();
+            particle.draw();
+        });
+
+        // Рисуем соединения между близкими частицами
+        const maxDistance = window.innerWidth < 768 ? 100 : 120;
+        particles.forEach((p1, i) => {
+            particles.slice(i + 1).forEach(p2 => {
+                const dx = p1.x - p2.x;
+                const dy = p1.y - p2.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < maxDistance) {
+                    ctx.strokeStyle = `rgba(87, 83, 222, ${0.15 * (1 - distance / maxDistance)})`;
+                    ctx.lineWidth = 0.8;
+                    ctx.beginPath();
+                    ctx.moveTo(p1.x, p1.y);
+                    ctx.lineTo(p2.x, p2.y);
+                    ctx.stroke();
+                }
+            });
+        });
+
+        requestAnimationFrame(animateParticles);
+    }
+
+    animateParticles();
+
+    // Обновляем размер canvas при изменении окна
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        // Пересоздаем частицы при изменении размера
+        const newCount = getParticleCount();
+        if (newCount !== particles.length) {
+            particles.length = 0;
+            for (let i = 0; i < newCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+    });
+}
+
+
+// ПЛАВАЮЩИЕ ОРБЫ
+const orbsContainer = document.getElementById('orbs-container');
+if (orbsContainer) {
+    const orbCount = window.innerWidth < 768 ? 3 : 4;
+    for (let i = 0; i < orbCount; i++) {
+        const orb = document.createElement('div');
+        orb.className = 'orb';
+        const baseSize = window.innerWidth < 768 ? 150 : 200;
+        const size = Math.random() * 150 + baseSize;
+        orb.style.width = size + 'px';
+        orb.style.height = size + 'px';
+        orb.style.left = Math.random() * 100 + '%';
+        orb.style.top = Math.random() * 100 + '%';
+        
+        const colors = [
+            'radial-gradient(circle, rgba(87, 83, 222, 0.3), transparent)',
+            'radial-gradient(circle, rgba(139, 135, 255, 0.25), transparent)',
+            'radial-gradient(circle, rgba(87, 83, 222, 0.2), transparent)',
+            'radial-gradient(circle, rgba(139, 135, 255, 0.3), transparent)'
+        ];
+        
+        orb.style.background = colors[i % colors.length];
+        orb.style.animationDelay = (i * 5) + 's';
+        orb.style.animationDuration = (15 + i * 3) + 's';
+        orbsContainer.appendChild(orb);
+    }
 }

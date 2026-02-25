@@ -383,3 +383,133 @@
         font-size: 20px;
     }
 }
+
+
+/* Particles Canvas - всегда в окне */
+#particles-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Floating Orbs - всегда в окне */
+#orbs-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    animation: float 20s ease-in-out infinite;
+    opacity: 0.6;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+    }
+    25% {
+        transform: translate(50px, -50px) scale(1.1);
+    }
+    50% {
+        transform: translate(-30px, 30px) scale(0.9);
+    }
+    75% {
+        transform: translate(30px, 50px) scale(1.05);
+    }
+}
+
+
+/* Дополнительная адаптивность для VPN страницы */
+@media (max-width: 360px) {
+    .vpn-title {
+        font-size: 24px;
+    }
+    
+    .vpn-subtitle {
+        font-size: 14px;
+    }
+    
+    .vpn-badge-large {
+        font-size: 14px;
+        padding: 8px 16px;
+    }
+    
+    .vpn-download-info h3 {
+        font-size: 24px;
+    }
+    
+    .vpn-download-info p {
+        font-size: 13px;
+    }
+    
+    .vpn-feature-card {
+        padding: 20px 15px;
+    }
+    
+    .vpn-feature-card h3 {
+        font-size: 18px;
+    }
+    
+    .vpn-feature-card p {
+        font-size: 13px;
+    }
+    
+    .vpn-price-card {
+        padding: 25px 15px;
+    }
+    
+    .vpn-price {
+        font-size: 32px;
+    }
+}
+
+/* Планшеты */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .vpn-features-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .vpn-pricing-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Большие экраны */
+@media (min-width: 1440px) {
+    .vpn-title {
+        font-size: 64px;
+    }
+    
+    .vpn-features-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 40px;
+    }
+}
+
+/* Landscape на мобильных */
+@media (max-height: 500px) and (orientation: landscape) {
+    .vpn-hero-section {
+        padding: 40px 20px;
+    }
+    
+    .vpn-title {
+        font-size: 32px;
+    }
+    
+    .vpn-badge-large {
+        margin-bottom: 10px;
+    }
+}
