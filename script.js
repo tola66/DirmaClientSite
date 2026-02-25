@@ -726,6 +726,23 @@ window.addEventListener('load', () => {
     if (savedUser) {
         currentUser = savedUser;
         console.log('Loaded user from cookie Dirma_ID:', currentUser);
+        
+        // Синхронизируем данные с API чтобы получить актуальный HWID
+        fetchAPI().then(data => {
+            if (data && data[_0xf(0)]) {
+                const freshUser = data[_0xf(0)].find(u => 
+                    u[_0xf(2)] === currentUser[_0xf(2)] && 
+                    u[_0xf(3)] === currentUser[_0xf(3)]
+                );
+                if (freshUser) {
+                    console.log('Syncing user data from API:', freshUser);
+                    currentUser = freshUser;
+                    saveUserToCookie(freshUser);
+                    updateAllButtons();
+                }
+            }
+        });
+        
         updateAllButtons();
     } else {
         console.log('No saved user found in cookie');
