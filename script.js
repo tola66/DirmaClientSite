@@ -411,14 +411,8 @@ async function activateKey() {
         return;
     }
     
-    console.log('=== KEY ACTIVATION DEBUG ===');
-    console.log('Entered key:', key);
-    console.log('HWID keys array:', data.hwidkey);
-    console.log('Normal keys array:', data[_0xf(1)]);
-    
     // Проверяем является ли это HWID reset ключом
     const isHwidKey = data.hwidkey && data.hwidkey.includes(key);
-    console.log('Is HWID key?', isHwidKey);
     
     if (isHwidKey) {
         // HWID Reset Key - удаляем ключ из массива
