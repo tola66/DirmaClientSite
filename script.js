@@ -307,6 +307,12 @@ async function login() {
     currentUser = user;
     saveUserToCookie(user); // Сохраняем в Cookie вместо localStorage
     console.log('User logged in and saved:', user);
+    console.log('User HWID field:', user[_0xf(5)]);
+    console.log('All user fields:', {
+        username: user[_0xf(2)],
+        sub: user[_0xf(4)],
+        hwid: user[_0xf(5)]
+    });
     showAccountPanel();
     updateAllButtons();
     error.textContent = '';
@@ -399,7 +405,12 @@ async function activateKey() {
     const isHwidKey = data.hwidkey && data.hwidkey.includes(key);
     
     if (isHwidKey) {
-        // HWID Reset Key
+        // HWID Reset Key - удаляем ключ из массива
+        const hwidKeyIndex = data.hwidkey.indexOf(key);
+        if (hwidKeyIndex !== -1) {
+            data.hwidkey.splice(hwidKeyIndex, 1);
+        }
+        
         const userIndex = data[_0xf(0)].findIndex(u => u[_0xf(2)] === currentUser[_0xf(2)]);
         if (userIndex !== -1) {
             data[_0xf(0)][userIndex][_0xf(5)] = ''; // Очищаем HWID
@@ -446,8 +457,8 @@ async function activateKey() {
         return;
     }
     
-    // Ключ НЕ удаляется из массива после активации
-    // data[_0xf(1)].splice(keyIndex, 1);
+    // Удаляем ключ из массива после активации
+    data[_0xf(1)].splice(keyIndex, 1);
     
     const userIndex = data[_0xf(0)].findIndex(u => u[_0xf(2)] === currentUser[_0xf(2)]);
     if (userIndex !== -1) {
@@ -625,9 +636,19 @@ function showAccountPanel() {
     statusEl.className = 'account-status ' + (currentUser[_0xf(4)] === 'Active' ? 'active' : 'expired');
     
     const hwidEl = document.getElementById('account-hwid');
-    const hwid = currentUser[_0xf(5)];
     
-    console.log('showAccountPanel - HWID value:', hwid, 'Type:', typeof hwid);
+    // Детальное логирование для отладки
+    console.log('=== HWID DEBUG ===');
+    console.log('currentUser object:', currentUser);
+    console.log('_0xf(5) returns:', _0xf(5));
+    console.log('currentUser[_0xf(5)]:', currentUser[_0xf(5)]);
+    console.log('currentUser.hwid:', currentUser.hwid);
+    console.log('currentUser["hwid"]:', currentUser["hwid"]);
+    
+    // Пробуем разные способы получить HWID
+    let hwid = currentUser[_0xf(5)] || currentUser.hwid || currentUser["hwid"] || '';
+    
+    console.log('Final HWID value:', hwid, 'Type:', typeof hwid, 'Length:', hwid.length);
     
     // Проверяем что HWID существует и не пустой
     if (hwid && hwid !== '' && hwid.trim().length > 0) {
