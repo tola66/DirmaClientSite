@@ -446,7 +446,8 @@ async function activateKey() {
         return;
     }
     
-    data[_0xf(1)].splice(keyIndex, 1);
+    // Ключ НЕ удаляется из массива после активации
+    // data[_0xf(1)].splice(keyIndex, 1);
     
     const userIndex = data[_0xf(0)].findIndex(u => u[_0xf(2)] === currentUser[_0xf(2)]);
     if (userIndex !== -1) {
@@ -624,11 +625,17 @@ function showAccountPanel() {
     statusEl.className = 'account-status ' + (currentUser[_0xf(4)] === 'Active' ? 'active' : 'expired');
     
     const hwidEl = document.getElementById('account-hwid');
-    const hwid = currentUser[_0xf(5)] || '';
-    if (hwid && hwid.length > 0) {
+    const hwid = currentUser[_0xf(5)];
+    
+    console.log('showAccountPanel - HWID value:', hwid, 'Type:', typeof hwid);
+    
+    // Проверяем что HWID существует и не пустой
+    if (hwid && hwid !== '' && hwid.trim().length > 0) {
         hwidEl.textContent = hwid;
+        console.log('HWID displayed:', hwid);
     } else {
         hwidEl.textContent = 'Not bound yet';
+        console.log('HWID not set, showing "Not bound yet"');
     }
 }
 
