@@ -324,6 +324,7 @@ document.head.appendChild(fadeOutStyle);
 // Обфусцированные данные - многоуровневое шифрование
 const _0x5f2a = 'aHR0cHM6Ly9hcGkubnBvaW50LmlvLzhiY2UxZDZmMGU2ODIyMjM3ODQ1';
 const _0x7d4e = ['users','keys','username','password','sub','hwid'];
+const _0x9h3k = 'aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3lvdXJyZXBvL3dlYnNpdGUvbWFpbi9hcGkvaHdpZGtleXMuanNvbg=='; // HWID keys URL
 
 // Декодирование URL
 function _0xurl() {
@@ -333,6 +334,31 @@ function _0xurl() {
 // Получение имени поля
 function _0xf(index) {
     return _0x7d4e[index];
+}
+
+// Получение URL для HWID ключей
+function _0xhwidurl() {
+    try {
+        return './api/hwidkeys.json'; // Локальный путь к файлу
+    } catch (e) {
+        return null;
+    }
+}
+
+// Загрузка HWID ключей
+async function fetchHWIDKeys() {
+    try {
+        const url = _0xhwidurl();
+        if (!url) return null;
+        
+        const response = await fetch(url);
+        if (!response.ok) return null;
+        
+        return await response.json();
+    } catch (error) {
+        console.error('HWID Keys Error:', error);
+        return null;
+    }
 }
 
 const API_URL = _0xurl();
@@ -527,6 +553,75 @@ async function activateKey() {
     }, 2000);
 }
 
+// Сброс HWID
+async function resetHWID() {
+    const key = document.getElementById('hwid-key').value.trim().toUpperCase();
+    const error = document.getElementById('hwid-error');
+    
+    if (!key) {
+        error.textContent = 'Enter HWID key';
+        return;
+    }
+    
+    if (!currentUser) {
+        error.textContent = 'Sign in to your account';
+        return;
+    }
+    
+    error.textContent = 'Checking HWID key...';
+    
+    // Загружаем HWID ключи
+    const hwidData = await fetchHWIDKeys();
+    
+    if (!hwidData || !hwidData.hwidkey) {
+        error.textContent = 'HWID keys service unavailable';
+        return;
+    }
+    
+    // Проверка существования ключа
+    const keyIndex = hwidData.hwidkey.indexOf(key);
+    
+    if (keyIndex === -1) {
+        error.textContent = 'Invalid HWID key';
+        return;
+    }
+    
+    // Загружаем данные пользователя
+    const data = await fetchAPI();
+    
+    if (!data) {
+        error.textContent = 'Server connection error';
+        return;
+    }
+    
+    // Сброс HWID пользователя
+    const userIndex = data[_0xf(0)].findIndex(u => u[_0xf(2)] === currentUser[_0xf(2)]);
+    if (userIndex !== -1) {
+        data[_0xf(0)][userIndex][_0xf(5)] = ''; // Очищаем HWID
+        currentUser[_0xf(5)] = '';
+    }
+    
+    const saved = await saveAPI(data);
+    
+    if (!saved) {
+        error.textContent = 'Data save error';
+        return;
+    }
+    
+    localStorage.setItem('dirma_user', JSON.stringify(currentUser));
+    
+    // Показываем успех
+    error.style.color = '#4CAF50';
+    error.textContent = 'HWID successfully reset! You can now login from a new device.';
+    
+    setTimeout(() => {
+        showAccountPanel();
+        error.style.color = '#ff6b6b';
+        error.textContent = '';
+        document.getElementById('hwid-key').value = '';
+    }, 3000);
+}
+
 // Выход
 function logout() {
     currentUser = null;
@@ -540,6 +635,7 @@ function showLogin() {
     document.getElementById('login-form').classList.remove('hidden');
     document.getElementById('register-form').classList.add('hidden');
     document.getElementById('activate-form').classList.add('hidden');
+    document.getElementById('hwid-reset-form').classList.add('hidden');
     document.getElementById('account-panel').classList.add('hidden');
 }
 
@@ -548,6 +644,7 @@ function showRegister() {
     document.getElementById('login-form').classList.add('hidden');
     document.getElementById('register-form').classList.remove('hidden');
     document.getElementById('activate-form').classList.add('hidden');
+    document.getElementById('hwid-reset-form').classList.add('hidden');
     document.getElementById('account-panel').classList.add('hidden');
 }
 
@@ -556,6 +653,16 @@ function showActivateForm() {
     document.getElementById('login-form').classList.add('hidden');
     document.getElementById('register-form').classList.add('hidden');
     document.getElementById('activate-form').classList.remove('hidden');
+    document.getElementById('hwid-reset-form').classList.add('hidden');
+    document.getElementById('account-panel').classList.add('hidden');
+}
+
+// Показать форму сброса HWID
+function showHWIDResetForm() {
+    document.getElementById('login-form').classList.add('hidden');
+    document.getElementById('register-form').classList.add('hidden');
+    document.getElementById('activate-form').classList.add('hidden');
+    document.getElementById('hwid-reset-form').classList.remove('hidden');
     document.getElementById('account-panel').classList.add('hidden');
 }
 
@@ -569,6 +676,7 @@ function showAccountPanel() {
     document.getElementById('login-form').classList.add('hidden');
     document.getElementById('register-form').classList.add('hidden');
     document.getElementById('activate-form').classList.add('hidden');
+    document.getElementById('hwid-reset-form').classList.add('hidden');
     document.getElementById('account-panel').classList.remove('hidden');
     
     document.getElementById('account-username').textContent = currentUser[_0xf(2)];
@@ -639,6 +747,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     document.getElementById('activate-key')?.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') activateKey();
+    });
+    
+    document.getElementById('hwid-key')?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') resetHWID();
     });
 });
 

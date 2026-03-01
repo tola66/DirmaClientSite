@@ -111,6 +111,29 @@
                 </div>
             </div>
 
+            <!-- Reset HWID -->
+            <div id="hwid-reset-form" class="auth-form hidden">
+                <div class="auth-header">
+                    <div class="auth-logo">
+                        <span class="logo-icon">D</span>
+                        <span class="logo-text">Dirma Client</span>
+                    </div>
+                    <h2>Reset HWID</h2>
+                    <p>Enter HWID key to reset your hardware ID</p>
+                </div>
+                <div class="auth-content">
+                    <input type="text" id="hwid-key" class="auth-input" placeholder="KEY-XXXX-XXXX" style="text-transform: uppercase;">
+                    <button class="btn btn-primary auth-submit" onclick="resetHWID()">
+                        <span class="btn-icon">🔄</span>
+                        Reset HWID
+                    </button>
+                    <div id="hwid-error" class="auth-error"></div>
+                    <div class="auth-switch">
+                        <a href="#" onclick="showAccountPanel(); return false;">← Back to Account</a>
+                    </div>
+                </div>
+            </div>
+
             <!-- Account Panel -->
             <div id="account-panel" class="auth-form hidden">
                 <div class="auth-header">
@@ -125,6 +148,10 @@
                     <button class="btn btn-primary auth-submit" onclick="showActivateForm()">
                         <span class="btn-icon">🔑</span>
                         Activate Key
+                    </button>
+                    <button class="btn btn-secondary auth-submit" onclick="showHWIDResetForm()">
+                        <span class="btn-icon">🔄</span>
+                        Reset HWID
                     </button>
                     <button class="btn btn-secondary auth-submit" onclick="logout()">
                         <span class="btn-icon">←</span>
