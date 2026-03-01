@@ -323,8 +323,7 @@ document.head.appendChild(fadeOutStyle);
 // ==================== СИСТЕМА АККАУНТОВ ====================
 // Обфусцированные данные - многоуровневое шифрование
 const _0x5f2a = 'aHR0cHM6Ly9hcGkubnBvaW50LmlvLzhiY2UxZDZmMGU2ODIyMjM3ODQ1';
-const _0x7d4e = ['users','keys','username','password','sub','hwid'];
-const _0x9h3k = 'aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL3lvdXJyZXBvL3dlYnNpdGUvbWFpbi9hcGkvaHdpZGtleXMuanNvbg=='; // HWID keys URL
+const _0x7d4e = ['users','keys','username','password','sub','hwid','hwidkey'];
 
 // Декодирование URL
 function _0xurl() {
@@ -334,31 +333,6 @@ function _0xurl() {
 // Получение имени поля
 function _0xf(index) {
     return _0x7d4e[index];
-}
-
-// Получение URL для HWID ключей
-function _0xhwidurl() {
-    try {
-        return './api/hwidkeys.json'; // Локальный путь к файлу
-    } catch (e) {
-        return null;
-    }
-}
-
-// Загрузка HWID ключей
-async function fetchHWIDKeys() {
-    try {
-        const url = _0xhwidurl();
-        if (!url) return null;
-        
-        const response = await fetch(url);
-        if (!response.ok) return null;
-        
-        return await response.json();
-    } catch (error) {
-        console.error('HWID Keys Error:', error);
-        return null;
-    }
 }
 
 const API_URL = _0xurl();
@@ -570,29 +544,29 @@ async function resetHWID() {
     
     error.textContent = 'Checking HWID key...';
     
-    // Загружаем HWID ключи
-    const hwidData = await fetchHWIDKeys();
-    
-    if (!hwidData || !hwidData.hwidkey) {
-        error.textContent = 'HWID keys service unavailable';
-        return;
-    }
-    
-    // Проверка существования ключа
-    const keyIndex = hwidData.hwidkey.indexOf(key);
-    
-    if (keyIndex === -1) {
-        error.textContent = 'Invalid HWID key';
-        return;
-    }
-    
-    // Загружаем данные пользователя
+    // Загружаем данные с API (включая HWID ключи)
     const data = await fetchAPI();
     
     if (!data) {
         error.textContent = 'Server connection error';
         return;
     }
+    
+    // Проверка существования HWID ключа в массиве hwidkey
+    if (!data[_0xf(6)] || !Array.isArray(data[_0xf(6)])) {
+        error.textContent = 'HWID keys not found in database';
+        return;
+    }
+    
+    const keyIndex = data[_0xf(6)].indexOf(key);
+    
+    if (keyIndex === -1) {
+        error.textContent = 'Invalid HWID key';
+        return;
+    }
+    
+    // Удаляем использованный ключ из массива
+    data[_0xf(6)].splice(keyIndex, 1);
     
     // Сброс HWID пользователя
     const userIndex = data[_0xf(0)].findIndex(u => u[_0xf(2)] === currentUser[_0xf(2)]);
@@ -601,6 +575,7 @@ async function resetHWID() {
         currentUser[_0xf(5)] = '';
     }
     
+    // Сохраняем изменения на API
     const saved = await saveAPI(data);
     
     if (!saved) {
