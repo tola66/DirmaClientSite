@@ -1,13 +1,8 @@
 // Плавная прокрутка к секциям
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
-        const href = this.getAttribute('href');
-        // Игнорируем пустые якоря
-        if (!href || href === '#' || href.length <= 1) {
-            return;
-        }
         e.preventDefault();
-        const target = document.querySelector(href);
+        const target = document.querySelector(this.getAttribute('href'));
         if (target) {
             target.scrollIntoView({
                 behavior: 'smooth',
@@ -23,10 +18,12 @@ document.querySelectorAll('.faq-question').forEach(question => {
         const faqItem = question.parentElement;
         const isActive = faqItem.classList.contains('active');
         
+        // Закрываем все открытые FAQ
         document.querySelectorAll('.faq-item').forEach(item => {
             item.classList.remove('active');
         });
         
+        // Открываем текущий, если он был закрыт
         if (!isActive) {
             faqItem.classList.add('active');
         }
@@ -35,11 +32,14 @@ document.querySelectorAll('.faq-question').forEach(question => {
 
 // Функция скачивания лоадера
 function downloadLoader() {
-    const loaderUrl = './DirmaLoader.exe';
+    // Определяем, какой файл скачивать
+    const loaderUrl = './DirmaLoader.exe'; // По умолчанию EXE
     const fileName = 'DirmaLoader.exe';
     
+    // Показываем уведомление
     showNotification('Download started!', 'success');
     
+    // Создаём временную ссылку для скачивания
     const link = document.createElement('a');
     link.href = loaderUrl;
     link.download = fileName;
@@ -47,11 +47,20 @@ function downloadLoader() {
     link.click();
     document.body.removeChild(link);
     
+    // Отправляем статистику (опционально)
     trackDownload();
     
+    // Показываем инструкцию
     setTimeout(() => {
         showNotification('Don\'t forget to install Java 25!', 'info');
     }, 2000);
+}
+
+// Функция скачивания Java
+function downloadJava() {
+    const javaUrl = 'https://adoptium.net/download?link=https%3A%2F%2Fgithub.com%2Fadoptium%2Ftemurin25-binaries%2Freleases%2Fdownload%2Fjdk-25.0.2%252B10%2FOpenJDK25U-jdk_x64_windows_hotspot_25.0.2_10.msi&vendor=Adoptium';
+    window.open(javaUrl, '_blank');
+    showNotification('Открыта страница загрузки Java 25', 'info');
 }
 
 // Показ уведомлений
@@ -83,6 +92,7 @@ function showNotification(message, type = 'info') {
     }, 3000);
 }
 
+// Добавляем CSS для анимации уведомлений
 const style = document.createElement('style');
 style.textContent = `
     @keyframes slideIn {
@@ -109,10 +119,23 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
+// Отслеживание скачиваний (опционально)
 function trackDownload() {
+    // Здесь можно добавить отправку статистики на сервер
     console.log('Download tracked:', new Date().toISOString());
+    
+    // Пример отправки на сервер:
+    // fetch('/api/track-download', {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({
+    //         timestamp: new Date().toISOString(),
+    //         userAgent: navigator.userAgent
+    //     })
+    // });
 }
 
+// Эффект параллакса для hero секции
 window.addEventListener('scroll', () => {
     const scrolled = window.pageYOffset;
     const hero = document.querySelector('.hero-content');
@@ -122,6 +145,7 @@ window.addEventListener('scroll', () => {
     }
 });
 
+// Анимация появления элементов при скролле
 const observerOptions = {
     threshold: 0.1,
     rootMargin: '0px 0px -100px 0px'
@@ -136,11 +160,13 @@ const observer = new IntersectionObserver((entries) => {
     });
 }, observerOptions);
 
+// Наблюдаем за элементами
 document.querySelectorAll('.feature-card, .step, .faq-item').forEach(el => {
     el.style.opacity = '0';
     observer.observe(el);
 });
 
+// Добавляем анимацию fadeInUp
 const fadeInStyle = document.createElement('style');
 fadeInStyle.textContent = `
     @keyframes fadeInUp {
@@ -156,6 +182,7 @@ fadeInStyle.textContent = `
 `;
 document.head.appendChild(fadeInStyle);
 
+// Изменение навбара при скролле
 window.addEventListener('scroll', () => {
     const navbar = document.querySelector('.navbar');
     if (window.scrollY > 50) {
@@ -167,9 +194,33 @@ window.addEventListener('scroll', () => {
     }
 });
 
+// Проверка системы пользователя
+function detectOS() {
+    const userAgent = window.navigator.userAgent;
+    const platform = window.navigator.platform;
+    const macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'];
+    const windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'];
+    
+    if (macosPlatforms.indexOf(platform) !== -1) {
+        return 'macOS';
+    } else if (windowsPlatforms.indexOf(platform) !== -1) {
+        return 'Windows';
+    } else if (/Linux/.test(platform)) {
+        return 'Linux';
+    }
+    return 'Unknown';
+}
+
+// Обновляем текст кнопки в зависимости от ОС
+window.addEventListener('load', () => {
+    // Функция отключена - используем стандартный текст кнопки
+});
+
+// Счётчик загрузок (демо)
 let downloadCount = 10247;
 const statValue = document.querySelector('.stat-value');
 if (statValue && statValue.textContent.includes('10K+')) {
+    // Анимация счётчика
     let current = 0;
     const target = downloadCount;
     const increment = target / 100;
@@ -184,15 +235,16 @@ if (statValue && statValue.textContent.includes('10K+')) {
 }
 
 console.log('%cDirma Client', 'color: #5753de; font-size: 24px; font-weight: bold;');
+console.log('%cСпасибо за использование нашего клиента!', 'color: #8b87ff; font-size: 14px;');
 
-
-// КАПЧА
+// ==================== КАПЧА ====================
 let captchaAnswer = 0;
 
 function generateCaptcha() {
     const num1 = Math.floor(Math.random() * 10) + 1;
     const num2 = Math.floor(Math.random() * 10) + 1;
     captchaAnswer = num1 + num2;
+    
     document.getElementById('captcha-question').textContent = `${num1} + ${num2} = ?`;
 }
 
@@ -208,17 +260,22 @@ function checkCaptcha() {
     }
     
     if (userAnswer === captchaAnswer) {
+        // Правильный ответ
         const overlay = document.getElementById('captcha-overlay');
         overlay.style.animation = 'fadeOut 0.3s ease';
         setTimeout(() => {
             overlay.classList.add('hidden');
+            // Сохраняем в localStorage что капча пройдена
             localStorage.setItem('captcha_passed', 'true');
             localStorage.setItem('captcha_time', Date.now().toString());
         }, 300);
     } else {
+        // Неправильный ответ
         error.textContent = 'Wrong answer. Try again.';
         input.style.borderColor = '#ff6b6b';
         input.value = '';
+        
+        // Генерируем новый пример
         setTimeout(() => {
             generateCaptcha();
             error.textContent = '';
@@ -227,47 +284,64 @@ function checkCaptcha() {
     }
 }
 
+// Проверка при загрузке страницы
 window.addEventListener('load', () => {
     const captchaPassed = localStorage.getItem('captcha_passed');
     const captchaTime = localStorage.getItem('captcha_time');
     const overlay = document.getElementById('captcha-overlay');
     
+    // Капча действительна 24 часа
     const validTime = 24 * 60 * 60 * 1000;
     const now = Date.now();
     
     if (captchaPassed === 'true' && captchaTime && (now - parseInt(captchaTime)) < validTime) {
+        // Капча уже пройдена и еще действительна
         overlay.classList.add('hidden');
     } else {
+        // Показываем капчу
         generateCaptcha();
-        const btn = document.getElementById('captcha-submit-btn');
-        if (btn) btn.onclick = checkCaptcha;
+        
+        // Обработка Enter
         document.getElementById('captcha-input').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') checkCaptcha();
+            if (e.key === 'Enter') {
+                checkCaptcha();
+            }
         });
     }
 });
 
+// Добавляем анимацию fadeOut
 const fadeOutStyle = document.createElement('style');
-fadeOutStyle.textContent = `@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }`;
+fadeOutStyle.textContent = `
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+`;
 document.head.appendChild(fadeOutStyle);
 
-
-// СИСТЕМА АККАУНТОВ
+// ==================== СИСТЕМА АККАУНТОВ ====================
+// Обфусцированные данные - многоуровневое шифрование
 const _0x5f2a = 'aHR0cHM6Ly9hcGkubnBvaW50LmlvLzhiY2UxZDZmMGU2ODIyMjM3ODQ1';
 const _0x7d4e = ['users','keys','username','password','sub','hwid'];
-function _0xurl() { return atob(_0x5f2a); }
-function _0xf(index) { return _0x7d4e[index]; }
+
+// Декодирование URL
+function _0xurl() {
+    return atob(_0x5f2a);
+}
+
+// Получение имени поля
+function _0xf(index) {
+    return _0x7d4e[index];
+}
+
 const API_URL = _0xurl();
 let currentUser = null;
 
+// Загрузка данных с API
 async function fetchAPI() {
     try {
-        const response = await fetch(API_URL, {
-            cache: 'no-cache',
-            headers: {
-                'Cache-Control': 'no-cache'
-            }
-        });
+        const response = await fetch(API_URL);
         return await response.json();
     } catch (error) {
         console.error('API Error:', error);
@@ -275,6 +349,7 @@ async function fetchAPI() {
     }
 }
 
+// Сохранение данных на API
 async function saveAPI(data) {
     try {
         const response = await fetch(API_URL, {
@@ -289,6 +364,7 @@ async function saveAPI(data) {
     }
 }
 
+// Вход
 async function login() {
     const username = document.getElementById('login-username').value.trim();
     const password = document.getElementById('login-password').value;
@@ -314,20 +390,16 @@ async function login() {
         return;
     }
     
+    // Успешный вход
     currentUser = user;
-    saveUserToCookie(user); // Сохраняем в Cookie вместо localStorage
-    console.log('User logged in and saved:', user);
-    console.log('User HWID field:', user[_0xf(5)]);
-    console.log('All user fields:', {
-        username: user[_0xf(2)],
-        sub: user[_0xf(4)],
-        hwid: user[_0xf(5)]
-    });
+    localStorage.setItem('dirma_user', JSON.stringify(user));
+    
     showAccountPanel();
-    updateAllButtons();
+    updateAccountButton();
     error.textContent = '';
 }
 
+// Регистрация
 async function register() {
     const username = document.getElementById('register-username').value.trim();
     const password = document.getElementById('register-password').value;
@@ -362,11 +434,13 @@ async function register() {
         return;
     }
     
+    // Проверка существования пользователя
     if (data[_0xf(0)].find(u => u[_0xf(2)] === username)) {
         error.textContent = 'User with this name already exists';
         return;
     }
     
+    // Создание нового пользователя
     const newUser = {
         [_0xf(2)]: username,
         [_0xf(3)]: password,
@@ -375,6 +449,7 @@ async function register() {
     };
     
     data[_0xf(0)].push(newUser);
+    
     const saved = await saveAPI(data);
     
     if (!saved) {
@@ -382,13 +457,16 @@ async function register() {
         return;
     }
     
+    // Автоматический вход
     currentUser = newUser;
-    saveUserToCookie(newUser); // Сохраняем в Cookie
+    localStorage.setItem('dirma_user', JSON.stringify(newUser));
+    
     showAccountPanel();
-    updateAllButtons();
+    updateAccountButton();
     error.textContent = '';
 }
 
+// Активация ключа
 async function activateKey() {
     const key = document.getElementById('activate-key').value.trim().toUpperCase();
     const error = document.getElementById('activate-error');
@@ -411,55 +489,7 @@ async function activateKey() {
         return;
     }
     
-    // Проверяем является ли это HWID reset ключом
-    const isHwidKey = data.hwidkey && data.hwidkey.includes(key);
-    
-    if (isHwidKey) {
-        // HWID Reset Key - удаляем ключ из массива
-        const hwidKeyIndex = data.hwidkey.indexOf(key);
-        if (hwidKeyIndex !== -1) {
-            data.hwidkey.splice(hwidKeyIndex, 1);
-        }
-        
-        const userIndex = data[_0xf(0)].findIndex(u => u[_0xf(2)] === currentUser[_0xf(2)]);
-        if (userIndex !== -1) {
-            data[_0xf(0)][userIndex][_0xf(5)] = ''; // Очищаем HWID
-            currentUser[_0xf(5)] = '';
-        }
-        
-        const saved = await saveAPI(data);
-        
-        if (!saved) {
-            error.textContent = 'Data save error';
-            return;
-        }
-        
-        saveUserToCookie(currentUser);
-        
-        error.style.color = '#4CAF50';
-        error.textContent = 'HWID successfully reset!';
-        
-        // Меняем фон на зеленый
-        const activateForm = document.getElementById('activate-form');
-        activateForm.style.transition = 'background 0.5s ease';
-        activateForm.style.background = 'linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(102, 187, 106, 0.1) 100%)';
-        
-        updateAccountButton();
-        
-        // Обновляем отображение HWID
-        document.getElementById('account-hwid').textContent = 'Not bound yet';
-        
-        setTimeout(() => {
-            showAccountPanel();
-            error.style.color = '#ff6b6b';
-            error.textContent = '';
-            activateForm.style.background = '';
-        }, 2000);
-        
-        return;
-    }
-    
-    // Обычный ключ активации
+    // Проверка существования ключа
     const keyIndex = data[_0xf(1)].indexOf(key);
     
     if (keyIndex === -1) {
@@ -467,9 +497,10 @@ async function activateKey() {
         return;
     }
     
-    // Удаляем ключ из массива после активации
+    // Удаление ключа из списка
     data[_0xf(1)].splice(keyIndex, 1);
     
+    // Активация подписки
     const userIndex = data[_0xf(0)].findIndex(u => u[_0xf(2)] === currentUser[_0xf(2)]);
     if (userIndex !== -1) {
         data[_0xf(0)][userIndex][_0xf(4)] = 'Active';
@@ -483,150 +514,52 @@ async function activateKey() {
         return;
     }
     
-    saveUserToCookie(currentUser);
+    localStorage.setItem('dirma_user', JSON.stringify(currentUser));
     
+    // Показываем успех
     error.style.color = '#4CAF50';
     error.textContent = 'Key successfully activated!';
-    
-    // Меняем фон на зеленый
-    const activateForm = document.getElementById('activate-form');
-    activateForm.style.transition = 'background 0.5s ease';
-    activateForm.style.background = 'linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(102, 187, 106, 0.1) 100%)';
-    
-    updateAccountButton();
-    updateNavLoginButton();
     
     setTimeout(() => {
         showAccountPanel();
         error.style.color = '#ff6b6b';
         error.textContent = '';
-        activateForm.style.background = '';
     }, 2000);
 }
 
+// Выход
 function logout() {
-    console.log('Logout function called');
-    console.log('Current user before logout:', currentUser);
-    
     currentUser = null;
-    removeUserFromCookie(); // Удаляем Cookie вместо localStorage
-    
-    console.log('User logged out, currentUser is now:', currentUser);
-    console.log('Calling updateAllButtons...');
-    
-    updateAllButtons();
+    localStorage.removeItem('dirma_user');
+    updateAccountButton();
     closeAuth();
-    
-    // Принудительно обновляем кнопку еще раз через небольшую задержку
-    setTimeout(() => {
-        console.log('Delayed update...');
-        updateAllButtons();
-    }, 100);
 }
 
+// Показать форму входа
 function showLogin() {
     document.getElementById('login-form').classList.remove('hidden');
     document.getElementById('register-form').classList.add('hidden');
     document.getElementById('activate-form').classList.add('hidden');
     document.getElementById('account-panel').classList.add('hidden');
-    document.getElementById('change-password-form')?.classList.add('hidden');
 }
 
+// Показать форму регистрации
 function showRegister() {
     document.getElementById('login-form').classList.add('hidden');
     document.getElementById('register-form').classList.remove('hidden');
     document.getElementById('activate-form').classList.add('hidden');
     document.getElementById('account-panel').classList.add('hidden');
-    document.getElementById('change-password-form')?.classList.add('hidden');
 }
 
+// Показать форму активации
 function showActivateForm() {
     document.getElementById('login-form').classList.add('hidden');
     document.getElementById('register-form').classList.add('hidden');
     document.getElementById('activate-form').classList.remove('hidden');
     document.getElementById('account-panel').classList.add('hidden');
-    document.getElementById('change-password-form')?.classList.add('hidden');
 }
 
-function showChangePassword() {
-    document.getElementById('login-form').classList.add('hidden');
-    document.getElementById('register-form').classList.add('hidden');
-    document.getElementById('activate-form').classList.add('hidden');
-    document.getElementById('account-panel').classList.add('hidden');
-    document.getElementById('change-password-form').classList.remove('hidden');
-}
-
-async function changePassword() {
-    const oldPassword = document.getElementById('change-old-password').value;
-    const newPassword = document.getElementById('change-new-password').value;
-    const newPassword2 = document.getElementById('change-new-password2').value;
-    const error = document.getElementById('change-password-error');
-    
-    if (!oldPassword || !newPassword || !newPassword2) {
-        error.textContent = 'Fill in all fields';
-        return;
-    }
-    
-    if (newPassword !== newPassword2) {
-        error.textContent = 'New passwords do not match';
-        return;
-    }
-    
-    if (newPassword.length < 6) {
-        error.textContent = 'New password must be at least 6 characters';
-        return;
-    }
-    
-    if (!currentUser) {
-        error.textContent = 'You must be logged in';
-        return;
-    }
-    
-    // Проверяем старый пароль
-    if (currentUser[_0xf(3)] !== oldPassword && currentUser.password !== oldPassword) {
-        error.textContent = 'Current password is incorrect';
-        return;
-    }
-    
-    error.textContent = 'Changing password...';
-    const data = await fetchAPI();
-    
-    if (!data) {
-        error.textContent = 'Server connection error';
-        return;
-    }
-    
-    const userIndex = data[_0xf(0)].findIndex(u => u[_0xf(2)] === currentUser[_0xf(2)]);
-    if (userIndex !== -1) {
-        data[_0xf(0)][userIndex][_0xf(3)] = newPassword;
-        currentUser[_0xf(3)] = newPassword;
-        if (currentUser.password) currentUser.password = newPassword;
-    }
-    
-    const saved = await saveAPI(data);
-    
-    if (!saved) {
-        error.textContent = 'Data save error';
-        return;
-    }
-    
-    saveUserToCookie(currentUser);
-    
-    error.style.color = '#4CAF50';
-    error.textContent = 'Password successfully changed!';
-    
-    // Очищаем поля
-    document.getElementById('change-old-password').value = '';
-    document.getElementById('change-new-password').value = '';
-    document.getElementById('change-new-password2').value = '';
-    
-    setTimeout(() => {
-        showAccountPanel();
-        error.style.color = '#ff6b6b';
-        error.textContent = '';
-    }, 2000);
-}
-
+// Показать панель аккаунта
 function showAccountPanel() {
     if (!currentUser) {
         showLogin();
@@ -637,39 +570,14 @@ function showAccountPanel() {
     document.getElementById('register-form').classList.add('hidden');
     document.getElementById('activate-form').classList.add('hidden');
     document.getElementById('account-panel').classList.remove('hidden');
-    document.getElementById('change-password-form')?.classList.add('hidden');
     
     document.getElementById('account-username').textContent = currentUser[_0xf(2)];
-    
     const statusEl = document.getElementById('account-status');
     statusEl.textContent = `Subscription: ${currentUser[_0xf(4)]}`;
     statusEl.className = 'account-status ' + (currentUser[_0xf(4)] === 'Active' ? 'active' : 'expired');
-    
-    const hwidEl = document.getElementById('account-hwid');
-    
-    // Детальное логирование для отладки
-    console.log('=== HWID DEBUG ===');
-    console.log('currentUser object:', currentUser);
-    console.log('_0xf(5) returns:', _0xf(5));
-    console.log('currentUser[_0xf(5)]:', currentUser[_0xf(5)]);
-    console.log('currentUser.hwid:', currentUser.hwid);
-    console.log('currentUser["hwid"]:', currentUser["hwid"]);
-    
-    // Пробуем разные способы получить HWID
-    let hwid = currentUser[_0xf(5)] || currentUser.hwid || currentUser["hwid"] || '';
-    
-    console.log('Final HWID value:', hwid, 'Type:', typeof hwid, 'Length:', hwid.length);
-    
-    // Проверяем что HWID существует и не пустой
-    if (hwid && hwid !== '' && hwid.trim().length > 0) {
-        hwidEl.textContent = hwid;
-        console.log('HWID displayed:', hwid);
-    } else {
-        hwidEl.textContent = 'Not bound yet';
-        console.log('HWID not set, showing "Not bound yet"');
-    }
 }
 
+// Открыть окно авторизации
 function openAuth() {
     document.getElementById('auth-overlay').classList.remove('hidden');
     if (currentUser) {
@@ -679,82 +587,47 @@ function openAuth() {
     }
 }
 
+// Закрыть окно авторизации
 function closeAuth() {
     document.getElementById('auth-overlay').classList.add('hidden');
 }
 
+// Обновить кнопку аккаунта
 function updateAccountButton() {
     const button = document.getElementById('account-button');
     const text = document.getElementById('account-button-text');
     
-    if (!button || !text) {
-        console.warn('account-button or account-button-text not found');
-        return;
-    }
-    
     if (currentUser) {
-        const username = currentUser[_0xf(2)] || currentUser.username;
-        const sub = currentUser[_0xf(4)] || currentUser.sub;
-        console.log('Updating account button with username:', username);
-        text.textContent = username;
-        button.style.background = sub === 'Active' 
+        text.textContent = currentUser[_0xf(2)];
+        button.style.background = currentUser[_0xf(4)] === 'Active' 
             ? 'linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%)'
             : 'linear-gradient(135deg, #ff6b6b 0%, #ff8787 100%)';
     } else {
-        console.log('No user, setting account button to Login');
         text.textContent = 'Login';
         button.style.background = 'var(--gradient-1)';
     }
 }
 
+// Проверка авторизации при загрузке
 window.addEventListener('load', () => {
+    // Показываем кнопку аккаунта после прохождения капчи
     setTimeout(() => {
-        document.getElementById('account-button')?.classList.remove('hidden');
+        document.getElementById('account-button').classList.remove('hidden');
     }, 500);
     
-    // Миграция со старого localStorage на Cookie
-    const oldUser = localStorage.getItem('dirma_user');
-    if (oldUser) {
+    // Проверяем сохраненного пользователя
+    const savedUser = localStorage.getItem('dirma_user');
+    if (savedUser) {
         try {
-            const user = JSON.parse(oldUser);
-            saveUserToCookie(user);
-            localStorage.removeItem('dirma_user');
-            console.log('Migrated user from localStorage to cookie');
+            currentUser = JSON.parse(savedUser);
+            updateAccountButton();
         } catch (e) {
-            console.error('Migration error:', e);
             localStorage.removeItem('dirma_user');
         }
     }
-    
-    // Загружаем пользователя из Cookie
-    const savedUser = loadUserFromCookie();
-    if (savedUser) {
-        currentUser = savedUser;
-        console.log('Loaded user from cookie Dirma_ID:', currentUser);
-        
-        // Синхронизируем данные с API чтобы получить актуальный HWID
-        fetchAPI().then(data => {
-            if (data && data[_0xf(0)]) {
-                const freshUser = data[_0xf(0)].find(u => 
-                    u[_0xf(2)] === currentUser[_0xf(2)] && 
-                    u[_0xf(3)] === currentUser[_0xf(3)]
-                );
-                if (freshUser) {
-                    console.log('Syncing user data from API:', freshUser);
-                    currentUser = freshUser;
-                    saveUserToCookie(freshUser);
-                    updateAllButtons();
-                }
-            }
-        });
-        
-        updateAllButtons();
-    } else {
-        console.log('No saved user found in cookie');
-        updateAllButtons(); // Обновляем кнопки даже если нет пользователя
-    }
 });
 
+// Обработка Enter в формах
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('login-password')?.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') login();
@@ -767,15 +640,13 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('activate-key')?.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') activateKey();
     });
-    
-    document.getElementById('change-new-password2')?.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') changePassword();
-    });
 });
 
+// ==================== МОБИЛЬНОЕ МЕНЮ ====================
 function toggleMobileMenu() {
     const navLinks = document.getElementById('nav-links');
     const toggle = document.querySelector('.mobile-menu-toggle');
+    
     navLinks.classList.toggle('active');
     toggle.classList.toggle('active');
 }
@@ -783,243 +654,26 @@ function toggleMobileMenu() {
 function closeMobileMenu() {
     const navLinks = document.getElementById('nav-links');
     const toggle = document.querySelector('.mobile-menu-toggle');
+    
     navLinks.classList.remove('active');
     toggle.classList.remove('active');
 }
 
+// ==================== VPN DOWNLOAD ====================
 function downloadVPN() {
     const vpnUrl = './DirmaVPN.exe';
     const fileName = 'DirmaVPN.exe';
+    
     showNotification('VPN download started!', 'success');
+    
     const link = document.createElement('a');
     link.href = vpnUrl;
     link.download = fileName;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    
     setTimeout(() => {
         showNotification('Run DirmaVPN.exe to start protection', 'info');
     }, 2000);
-}
-
-
-// Обновление кнопки логина в навбаре
-function updateNavLoginButton() {
-    const navBtn = document.getElementById('nav-login-btn');
-    if (!navBtn) {
-        console.warn('nav-login-btn not found');
-        return;
-    }
-    
-    if (currentUser) {
-        const username = currentUser[_0xf(2)] || currentUser.username;
-        const sub = currentUser[_0xf(4)] || currentUser.sub;
-        
-        console.log('Updating nav button with username:', username, 'sub:', sub);
-        navBtn.textContent = username;
-        
-        // Меняем цвет в зависимости от подписки
-        if (sub === 'Active') {
-            navBtn.style.cssText = 'background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%) !important; color: white !important;';
-        } else {
-            navBtn.style.cssText = 'background: linear-gradient(135deg, #ff6b6b 0%, #ff8787 100%) !important; color: white !important;';
-        }
-    } else {
-        console.log('No user, setting Login text');
-        navBtn.textContent = 'Login';
-        navBtn.style.cssText = ''; // Убираем inline стили, вернется CSS по умолчанию
-    }
-}
-
-// Обновляем обе кнопки
-function updateAllButtons() {
-    console.log('updateAllButtons called, currentUser:', currentUser);
-    updateAccountButton();
-    updateNavLoginButton();
-    console.log('Both buttons updated');
-}
-
-
-// COOKIE FUNCTIONS
-function setCookie(name, value, days) {
-    let expires = "";
-    if (days) {
-        const date = new Date();
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-        expires = "; expires=" + date.toUTCString();
-    }
-    document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Strict";
-}
-
-function getCookie(name) {
-    const nameEQ = name + "=";
-    const ca = document.cookie.split(';');
-    for (let i = 0; i < ca.length; i++) {
-        let c = ca[i];
-        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
-    }
-    return null;
-}
-
-function deleteCookie(name) {
-    document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-}
-
-function saveUserToCookie(user) {
-    const userData = JSON.stringify(user);
-    const encoded = btoa(userData);
-    setCookie('Dirma_ID', encoded, 30); // 30 дней
-    console.log('User saved to cookie Dirma_ID');
-}
-
-function loadUserFromCookie() {
-    const encoded = getCookie('Dirma_ID');
-    if (!encoded) return null;
-    
-    try {
-        const userData = atob(encoded);
-        return JSON.parse(userData);
-    } catch (e) {
-        deleteCookie('Dirma_ID');
-        return null;
-    }
-}
-
-function removeUserFromCookie() {
-    deleteCookie('Dirma_ID');
-    console.log('Cookie Dirma_ID removed');
-}
-
-
-// БЕСКОНЕЧНЫЕ ЧАСТИЦЫ НА ЗАДНЕМ ФОНЕ
-const canvas = document.getElementById('particles-canvas');
-if (canvas) {
-    const ctx = canvas.getContext('2d');
-    
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    class Particle {
-        constructor() {
-            this.reset();
-        }
-
-        reset() {
-            this.x = Math.random() * canvas.width;
-            this.y = Math.random() * canvas.height;
-            this.size = Math.random() * 2.5 + 0.5;
-            this.speedX = (Math.random() - 0.5) * 1.5;
-            this.speedY = (Math.random() - 0.5) * 1.5;
-            this.opacity = Math.random() * 0.4 + 0.1;
-            this.color = `rgba(87, 83, 222, ${this.opacity})`;
-        }
-
-        update() {
-            this.x += this.speedX;
-            this.y += this.speedY;
-
-            // Wrap around screen (бесконечность)
-            if (this.x > canvas.width) this.x = 0;
-            if (this.x < 0) this.x = canvas.width;
-            if (this.y > canvas.height) this.y = 0;
-            if (this.y < 0) this.y = canvas.height;
-        }
-
-        draw() {
-            ctx.fillStyle = this.color;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fill();
-        }
-    }
-
-    // Адаптивное количество частиц
-    function getParticleCount() {
-        const width = window.innerWidth;
-        if (width < 480) return 40;
-        if (width < 768) return 60;
-        return 80;
-    }
-
-    const particles = [];
-    for (let i = 0; i < getParticleCount(); i++) {
-        particles.push(new Particle());
-    }
-
-    function animateParticles() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        particles.forEach(particle => {
-            particle.update();
-            particle.draw();
-        });
-
-        // Рисуем соединения между близкими частицами
-        const maxDistance = window.innerWidth < 768 ? 100 : 120;
-        particles.forEach((p1, i) => {
-            particles.slice(i + 1).forEach(p2 => {
-                const dx = p1.x - p2.x;
-                const dy = p1.y - p2.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-
-                if (distance < maxDistance) {
-                    ctx.strokeStyle = `rgba(87, 83, 222, ${0.15 * (1 - distance / maxDistance)})`;
-                    ctx.lineWidth = 0.8;
-                    ctx.beginPath();
-                    ctx.moveTo(p1.x, p1.y);
-                    ctx.lineTo(p2.x, p2.y);
-                    ctx.stroke();
-                }
-            });
-        });
-
-        requestAnimationFrame(animateParticles);
-    }
-
-    animateParticles();
-
-    // Обновляем размер canvas при изменении окна
-    window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        
-        // Пересоздаем частицы при изменении размера
-        const newCount = getParticleCount();
-        if (newCount !== particles.length) {
-            particles.length = 0;
-            for (let i = 0; i < newCount; i++) {
-                particles.push(new Particle());
-            }
-        }
-    });
-}
-
-
-// ПЛАВАЮЩИЕ ОРБЫ
-const orbsContainer = document.getElementById('orbs-container');
-if (orbsContainer) {
-    const orbCount = window.innerWidth < 768 ? 3 : 4;
-    for (let i = 0; i < orbCount; i++) {
-        const orb = document.createElement('div');
-        orb.className = 'orb';
-        const baseSize = window.innerWidth < 768 ? 150 : 200;
-        const size = Math.random() * 150 + baseSize;
-        orb.style.width = size + 'px';
-        orb.style.height = size + 'px';
-        orb.style.left = Math.random() * 100 + '%';
-        orb.style.top = Math.random() * 100 + '%';
-        
-        const colors = [
-            'radial-gradient(circle, rgba(87, 83, 222, 0.3), transparent)',
-            'radial-gradient(circle, rgba(139, 135, 255, 0.25), transparent)',
-            'radial-gradient(circle, rgba(87, 83, 222, 0.2), transparent)',
-            'radial-gradient(circle, rgba(139, 135, 255, 0.3), transparent)'
-        ];
-        
-        orb.style.background = colors[i % colors.length];
-        orb.style.animationDelay = (i * 5) + 's';
-        orb.style.animationDuration = (15 + i * 3) + 's';
-        orbsContainer.appendChild(orb);
-    }
 }
