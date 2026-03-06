@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Продукты - Dirma Client</title>
+    <link rel="icon" type="image/png" href="Dirma.png">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .products-container {
+            max-width: 1200px;
+            margin: 100px auto 50px;
+            padding: 40px;
+        }
+        
+        .products-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .products-title {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #8a2be2, #4169e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
+        
+        .products-subtitle {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.2rem;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .product-card {
+            background: rgba(20, 20, 30, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            border: 2px solid rgba(138, 43, 226, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(138, 43, 226, 0.6);
+            box-shadow: 0 20px 60px rgba(138, 43, 226, 0.4);
+        }
+        
+        .product-card.featured::before {
+            content: "Популярное";
+            position: absolute;
+            top: 20px;
+            right: -40px;
+            background: linear-gradient(135deg, #8a2be2, #4169e1);
+            color: white;
+            padding: 5px 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transform: rotate(45deg);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .product-icon {
+            font-size: 4rem;
+            margin-bottom: 25px;
+            display: block;
+            text-align: center;
+        }
+        
+        .product-name {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #8a2be2;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .product-price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #8a2be2, #4169e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .product-description {
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+        
+        .product-features {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+        
+        .product-features li {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 12px 0;
+            padding-left: 30px;
+            position: relative;
+            line-height: 1.6;
+        }
+        
+        .product-features li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4169e1;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .product-button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #8a2be2, #4169e1);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
+        
+        .product-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(138, 43, 226, 0.5);
+        }
+        
+        .back-link {
+            display: inline-block;
+            color: #8a2be2;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .back-link:hover {
+            color: #4169e1;
+            transform: translateX(-5px);
+        }
+    </style>
+</head>
+<body>
+    <div class="background">
+        <div class="stars"></div>
+        <div class="gradient-overlay"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <img src="Dirma.png" alt="Dirma" class="logo-image">
+                <span class="logo-text">Dirma Client</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="offer.html">Оферта</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="products-container">
+        <div class="products-header">
+            <h1 class="products-title">Наши продукты</h1>
+            <p class="products-subtitle">Выберите нужный продукт для покупки</p>
+        </div>
+
+        <div class="products-grid">
+            <!-- Dirma Client -->
+            <div class="product-card featured">
+                <span class="product-icon">🎮</span>
+                <h2 class="product-name">Dirma Client</h2>
+                <div class="product-price">366.60₽</div>
+                <p class="product-description">
+                    Полнофункциональный клиент для Minecraft 1.16.5 с современным интерфейсом и продвинутыми функциями
+                </p>
+                <ul class="product-features">
+                    <li>100+ функций</li>
+                    <li>Современный UI</li>
+                    <li>Регулярные обновления</li>
+                    <li>Поддержка 24/7</li>
+                    <li>Защита от обнаружения</li>
+                    <li>Гибкие настройки</li>
+                </ul>
+                <a href="BuyClient.html" class="product-button">
+                    Купить клиент →
+                </a>
+            </div>
+
+            <!-- HWID Reset -->
+            <div class="product-card">
+                <span class="product-icon">🔄</span>
+                <h2 class="product-name">HWID Reset</h2>
+                <div class="product-price">61.10₽</div>
+                <p class="product-description">
+                    Сброс привязки к железу для использования клиента на другом компьютере
+                </p>
+                <ul class="product-features">
+                    <li>Мгновенный сброс</li>
+                    <li>Простая активация</li>
+                    <li>Безопасно</li>
+                    <li>Поддержка 24/7</li>
+                    <li>Автоматическая доставка</li>
+                    <li>Без ограничений</li>
+                </ul>
+                <a href="BuyHwidReset.html" class="product-button">
+                    Купить HWID Reset →
+                </a>
+            </div>
+        </div>
+
+        <a href="index.html" class="back-link">← Вернуться на главную</a>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 Dirma Client. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,128 +1,124 @@
-// Anti-DDoS Protection Script
+// Anti-DDoS Protection with Captcha
 (function() {
     'use strict';
-    
-    // Проверка на бота
-    function checkBot() {
-        // Проверяем User Agent
-        const botPatterns = [
-            /bot/i, /crawler/i, /spider/i, /scraper/i,
-            /curl/i, /wget/i, /python/i, /java/i
-        ];
+
+    const CAPTCHA_VALIDITY = 24 * 60 * 60 * 1000; // 24 hours
+
+    // Check if captcha was already solved
+    function isCaptchaValid() {
+        const captchaSolved = localStorage.getItem('captchaSolved');
+        const solvedTime = localStorage.getItem('captchaSolvedTime');
         
-        const userAgent = navigator.userAgent;
-        for (let pattern of botPatterns) {
-            if (pattern.test(userAgent)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    // Проверка на слишком быстрые запросы
-    function checkRateLimit() {
-        const now = Date.now();
-        const lastVisit = localStorage.getItem('lastVisit');
-        
-        if (lastVisit) {
-            const timeDiff = now - parseInt(lastVisit);
-            if (timeDiff < 1000) { // Меньше 1 секунды между запросами
-                return true;
-            }
+        if (!captchaSolved || !solvedTime) {
+            return false;
         }
         
-        localStorage.setItem('lastVisit', now.toString());
-        return false;
+        const timePassed = Date.now() - parseInt(solvedTime);
+        return timePassed < CAPTCHA_VALIDITY;
+    }
+
+    // Initialize immediately (script is at end of body)
+    const overlay = document.getElementById('captcha-overlay');
+    
+    if (!overlay) {
+        console.error('Captcha overlay not found');
+        return;
     }
     
-    // Простая математическая проверка
-    function showChallenge() {
+    // If captcha is valid, hide overlay immediately
+    if (isCaptchaValid()) {
+        overlay.style.display = 'none';
+    } else {
+        // Show captcha and generate question
+        overlay.style.display = 'flex';
+        generateCaptcha();
+        
+        // Setup enter key listener
+        const input = document.getElementById('captcha-input');
+        if (input) {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkCaptcha();
+                }
+            });
+            input.focus();
+        }
+    }
+
+    // Generate random math captcha
+    function generateCaptcha() {
         const num1 = Math.floor(Math.random() * 10) + 1;
         const num2 = Math.floor(Math.random() * 10) + 1;
-        const answer = num1 + num2;
+        const question = document.getElementById('captcha-question');
         
-        const userAnswer = prompt(`Anti-DDoS Protection\nSolve: ${num1} + ${num2} = ?`);
-        
-        if (parseInt(userAnswer) !== answer) {
-            document.body.innerHTML = '<h1 style="text-align:center;margin-top:50px;">Access Denied</h1>';
-            return false;
-        }
-        return true;
-    }
-    
-    // Проверка WebGL (боты обычно не поддерживают)
-    function checkWebGL() {
-        try {
-            const canvas = document.createElement('canvas');
-            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-            return !!gl;
-        } catch(e) {
-            return false;
+        if (question) {
+            question.textContent = `${num1} + ${num2} = ?`;
+            question.dataset.answer = num1 + num2;
         }
     }
-    
-    // Основная проверка
-    function antiDDoSCheck() {
-        // Проверяем localStorage
-        const verified = sessionStorage.getItem('antiDDoSVerified');
-        if (verified === 'true') {
-            return true;
-        }
+    window.generateCaptcha = generateCaptcha;
+
+    // Check captcha answer
+    function checkCaptcha() {
+        const input = document.getElementById('captcha-input');
+        const question = document.getElementById('captcha-question');
+        const error = document.getElementById('captcha-error');
+        const overlay = document.getElementById('captcha-overlay');
         
-        // Проверка на бота
-        if (checkBot()) {
-            console.log('Bot detected');
-            if (!showChallenge()) {
-                return false;
+        if (!input || !question || !error || !overlay) return;
+        
+        const userAnswer = parseInt(input.value);
+        const correctAnswer = parseInt(question.dataset.answer);
+        
+        if (userAnswer === correctAnswer) {
+            // Correct answer - save to localStorage
+            localStorage.setItem('captchaSolved', 'true');
+            localStorage.setItem('captchaSolvedTime', Date.now().toString());
+            
+            // Hide overlay immediately
+            overlay.style.display = 'none';
+            error.textContent = '';
+        } else {
+            // Wrong answer
+            error.textContent = 'Wrong answer! Try again.';
+            error.style.color = '#ff4444';
+            input.value = '';
+            generateCaptcha();
+            input.focus();
+            
+            // Shake animation
+            const modal = overlay.querySelector('.captcha-modal');
+            if (modal) {
+                modal.style.animation = 'shake 0.5s';
+                setTimeout(() => {
+                    modal.style.animation = '';
+                }, 500);
             }
         }
-        
-        // Проверка rate limit
-        if (checkRateLimit()) {
-            console.log('Rate limit exceeded');
-            if (!showChallenge()) {
-                return false;
-            }
-        }
-        
-        // Проверка WebGL
-        if (!checkWebGL()) {
-            console.log('WebGL not supported');
-            if (!showChallenge()) {
-                return false;
-            }
-        }
-        
-        // Сохраняем что проверка пройдена
-        sessionStorage.setItem('antiDDoSVerified', 'true');
-        return true;
     }
-    
-    // Запускаем проверку при загрузке
-    if (!antiDDoSCheck()) {
-        window.location.href = 'about:blank';
-    }
-    
-    // Мониторинг активности
-    let activityCount = 0;
-    let lastActivity = Date.now();
-    
-    function checkActivity() {
+    window.checkCaptcha = checkCaptcha;
+
+    // Monitor suspicious activity
+    let clickCount = 0;
+    let lastClickTime = Date.now();
+
+    document.addEventListener('click', function() {
         const now = Date.now();
-        if (now - lastActivity < 100) {
-            activityCount++;
-            if (activityCount > 50) {
-                console.log('Suspicious activity detected');
-                document.body.innerHTML = '<h1 style="text-align:center;margin-top:50px;">Suspicious Activity Detected</h1>';
+        
+        if (now - lastClickTime < 100) {
+            clickCount++;
+            
+            if (clickCount > 10) {
+                console.warn('Suspicious activity detected');
+                localStorage.removeItem('captchaSolved');
+                localStorage.removeItem('captchaSolvedTime');
+                location.reload();
             }
         } else {
-            activityCount = 0;
+            clickCount = 0;
         }
-        lastActivity = now;
-    }
-    
-    document.addEventListener('mousemove', checkActivity);
-    document.addEventListener('click', checkActivity);
-    document.addEventListener('keypress', checkActivity);
-    
+        
+        lastClickTime = now;
+    });
+
 })();

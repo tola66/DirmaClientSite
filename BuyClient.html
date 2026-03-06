@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Купить Dirma Client - Выбор способа оплаты</title>
+    <link rel="icon" type="image/png" href="Dirma.png">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .buy-container {
+            max-width: 1000px;
+            margin: 100px auto 50px;
+            padding: 40px;
+        }
+        
+        .buy-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .buy-title {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #8a2be2, #4169e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
+        
+        .buy-subtitle {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.2rem;
+        }
+        
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .payment-card {
+            background: rgba(20, 20, 30, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            border: 2px solid rgba(138, 43, 226, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .payment-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(138, 43, 226, 0.6);
+            box-shadow: 0 15px 40px rgba(138, 43, 226, 0.3);
+        }
+        
+        .payment-card.recommended::before {
+            content: "Рекомендуем";
+            position: absolute;
+            top: 15px;
+            right: -35px;
+            background: linear-gradient(135deg, #8a2be2, #4169e1);
+            color: white;
+            padding: 5px 40px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transform: rotate(45deg);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .payment-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .payment-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #8a2be2;
+            margin-bottom: 10px;
+        }
+        
+        .payment-description {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .payment-features {
+            list-style: none;
+            margin-bottom: 25px;
+        }
+        
+        .payment-features li {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+        
+        .payment-features li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4169e1;
+            font-weight: bold;
+        }
+        
+        .payment-button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #8a2be2, #4169e1);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .payment-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(138, 43, 226, 0.4);
+        }
+        
+        .payment-button:disabled {
+            background: rgba(100, 100, 100, 0.5);
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .coming-soon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(138, 43, 226, 0.9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            z-index: 10;
+        }
+        
+        .payment-card.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .payment-card.disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .terms-section {
+            background: rgba(20, 20, 30, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            border: 2px solid rgba(138, 43, 226, 0.3);
+            margin-bottom: 30px;
+        }
+        
+        .terms-title {
+            color: #8a2be2;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .terms-list {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+        
+        .terms-list li {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+            line-height: 1.6;
+        }
+        
+        .terms-list li::before {
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+        
+        .terms-list li.check::before {
+            content: "✓";
+            color: #4169e1;
+        }
+        
+        .terms-list li.warning::before {
+            content: "⚠️";
+        }
+        
+        .checkbox-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+        
+        .checkbox-container input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            margin-top: 3px;
+        }
+        
+        .checkbox-text {
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+        }
+        
+        .checkbox-text a {
+            color: #8a2be2;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .checkbox-text a:hover {
+            text-decoration: underline;
+        }
+        
+        .back-link {
+            display: inline-block;
+            color: #8a2be2;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-link:hover {
+            color: #4169e1;
+            transform: translateX(-5px);
+        }
+    </style>
+</head>
+<body>
+    <div class="background">
+        <div class="stars"></div>
+        <div class="gradient-overlay"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <img src="Dirma.png" alt="Dirma" class="logo-image">
+                <span class="logo-text">Dirma Client</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Главная</a></li>
+                <li><a href="offer.html">Оферта</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="buy-container">
+        <div class="buy-header">
+            <h1 class="buy-title">Купить Dirma Client</h1>
+            <p class="buy-subtitle">Выберите удобный способ оплаты</p>
+        </div>
+
+        <div class="terms-section">
+            <h2 class="terms-title">⚠️ Важная информация перед покупкой</h2>
+            <ul class="terms-list">
+                <li class="check">Товар является цифровым контентом (программное обеспечение)</li>
+                <li class="check">Доступ предоставляется сразу после оплаты</li>
+                <li class="warning"><strong>Возврат средств после покупки невозможен</strong></li>
+                <li class="check">Системные требования: Java 25+, Minecraft 1.16.5</li>
+                <li class="check">Технические проблемы на вашей стороне не являются основанием для возврата</li>
+            </ul>
+            <label class="checkbox-container">
+                <input type="checkbox" id="agree-terms" onchange="togglePaymentButtons()">
+                <span class="checkbox-text">
+                    Я согласен с <a href="offer.html" target="_blank">условиями оферты</a> и подтверждаю, 
+                    что цифровой товар не подлежит возврату
+                </span>
+            </label>
+        </div>
+
+        <div class="payment-methods">
+            <!-- FunPay - Client Purchase -->
+            <div class="payment-card recommended">
+                <span class="payment-icon">🎮</span>
+                <h3 class="payment-name">FunPay</h3>
+                <p class="payment-description">
+                    Покупка Dirma Client через FunPay с защитой сделки
+                </p>
+                <ul class="payment-features">
+                    <li>Защита покупателя</li>
+                    <li>Мгновенная доставка</li>
+                    <li>Поддержка 24/7</li>
+                    <li>Карты РФ и СНГ</li>
+                </ul>
+                <button class="payment-button" id="funpay-btn" disabled onclick="goToFunPay()">
+                    Купить через FunPay
+                </button>
+            </div>
+
+            <!-- Crypto -->
+            <div class="payment-card disabled">
+                <div class="coming-soon">Скоро</div>
+                <span class="payment-icon">₿</span>
+                <h3 class="payment-name">Криптовалюта</h3>
+                <p class="payment-description">
+                    Оплата Bitcoin, Ethereum, USDT и другими криптовалютами
+                </p>
+                <ul class="payment-features">
+                    <li>Анонимность</li>
+                    <li>Низкие комиссии</li>
+                    <li>Международные платежи</li>
+                    <li>Быстрая обработка</li>
+                </ul>
+                <button class="payment-button" disabled>
+                    Скоро доступно
+                </button>
+            </div>
+
+            <!-- Bank Cards -->
+            <div class="payment-card disabled">
+                <div class="coming-soon">Скоро</div>
+                <span class="payment-icon">💳</span>
+                <h3 class="payment-name">Банковские карты</h3>
+                <p class="payment-description">
+                    Прямая оплата картой Visa, Mastercard, МИР
+                </p>
+                <ul class="payment-features">
+                    <li>Мгновенная оплата</li>
+                    <li>Безопасность 3D-Secure</li>
+                    <li>Все популярные карты</li>
+                    <li>Автоматическая доставка</li>
+                </ul>
+                <button class="payment-button" disabled>
+                    Скоро доступно
+                </button>
+            </div>
+
+            <!-- PayPal -->
+            <div class="payment-card disabled">
+                <div class="coming-soon">Скоро</div>
+                <span class="payment-icon">🌐</span>
+                <h3 class="payment-name">PayPal</h3>
+                <p class="payment-description">
+                    Международная платежная система для удобных покупок
+                </p>
+                <ul class="payment-features">
+                    <li>Защита покупателя</li>
+                    <li>Международные платежи</li>
+                    <li>Быстрая оплата</li>
+                    <li>Надежность</li>
+                </ul>
+                <button class="payment-button" disabled>
+                    Скоро доступно
+                </button>
+            </div>
+
+            <!-- Qiwi -->
+            <div class="payment-card disabled">
+                <div class="coming-soon">Скоро</div>
+                <span class="payment-icon">🥝</span>
+                <h3 class="payment-name">QIWI</h3>
+                <p class="payment-description">
+                    Популярный электронный кошелек для быстрых платежей
+                </p>
+                <ul class="payment-features">
+                    <li>Быстрая оплата</li>
+                    <li>Без комиссии</li>
+                    <li>Удобный интерфейс</li>
+                    <li>Поддержка рублей</li>
+                </ul>
+                <button class="payment-button" disabled>
+                    Скоро доступно
+                </button>
+            </div>
+
+            <!-- YooMoney -->
+            <div class="payment-card disabled">
+                <div class="coming-soon">Скоро</div>
+                <span class="payment-icon">💰</span>
+                <h3 class="payment-name">YooMoney</h3>
+                <p class="payment-description">
+                    Электронный кошелек от Яндекса для удобных покупок
+                </p>
+                <ul class="payment-features">
+                    <li>Быстрая оплата</li>
+                    <li>Интеграция с Яндекс</li>
+                    <li>Безопасность</li>
+                    <li>Кэшбэк</li>
+                </ul>
+                <button class="payment-button" disabled>
+                    Скоро доступно
+                </button>
+            </div>
+        </div>
+
+        <a href="products.html" class="back-link">← Вернуться к продуктам</a>
+        
+        <div class="terms-section" style="margin-top: 30px;">
+            <h2 class="terms-title">📞 Контакты поддержки</h2>
+            <p style="color: rgba(255, 255, 255, 0.8); line-height: 1.8;">
+                <strong>Discord:</strong> <a href="https://discord.gg/b7NMFqJZBP" target="_blank" style="color: #8a2be2; text-decoration: none;">discord.gg/b7NMFqJZBP</a><br>
+                <strong>Telegram:</strong> <a href="https://t.me/otmena_zero" target="_blank" style="color: #8a2be2; text-decoration: none;">@otmena_zero</a><br>
+                <strong>Email:</strong> <a href="mailto:Anatolij14bakanov.fgh@gmail.com" style="color: #8a2be2; text-decoration: none;">Anatolij14bakanov.fgh@gmail.com</a>
+            </p>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 Dirma Client. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function togglePaymentButtons() {
+            const checkbox = document.getElementById('agree-terms');
+            const funpayBtn = document.getElementById('funpay-btn');
+            
+            if (checkbox.checked) {
+                funpayBtn.disabled = false;
+            } else {
+                funpayBtn.disabled = true;
+            }
+        }
+
+        function goToFunPay() {
+            // Открываем FunPay покупку клиента в новой вкладке
+            window.open('https://funpay.com/lots/offer?id=64680510', '_blank');
+        }
+    </script>
+</body>
+</html>
