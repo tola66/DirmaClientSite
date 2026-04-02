@@ -238,44 +238,37 @@ console.log('%cDirma Client', 'color: #5753de; font-size: 24px; font-weight: bol
 console.log('%cСпасибо за использование нашего клиента!', 'color: #8b87ff; font-size: 14px;');
 
 // ==================== КАПЧА ====================
-let captchaAnswer = 0;
+let _captchaAnswer = 0;
 
 function generateCaptcha() {
     const num1 = Math.floor(Math.random() * 10) + 1;
     const num2 = Math.floor(Math.random() * 10) + 1;
-    captchaAnswer = num1 + num2;
-    
+    _captchaAnswer = num1 + num2;
     document.getElementById('captcha-question').textContent = `${num1} + ${num2} = ?`;
 }
 
 function checkCaptcha() {
     const input = document.getElementById('captcha-input');
     const error = document.getElementById('captcha-error');
-    const userAnswer = parseInt(input.value);
-    
-    if (isNaN(userAnswer)) {
+    const userAnswer = parseInt(input.value, 10);
+
+    if (isNaN(userAnswer) || input.value.trim() === '') {
         error.textContent = 'Please enter a number';
         input.style.borderColor = '#ff6b6b';
         return;
     }
-    
-    if (userAnswer === captchaAnswer) {
-        // Правильный ответ
+
+    if (userAnswer === _captchaAnswer) {
+        window._captchaPassed = true;
         const overlay = document.getElementById('captcha-overlay');
         overlay.style.animation = 'fadeOut 0.3s ease';
         setTimeout(() => {
-            overlay.classList.add('hidden');
-            // Сохраняем в localStorage что капча пройдена
-            localStorage.setItem('captcha_passed', 'true');
-            localStorage.setItem('captcha_time', Date.now().toString());
+            overlay.style.display = 'none';
         }, 300);
     } else {
-        // Неправильный ответ
         error.textContent = 'Wrong answer. Try again.';
         input.style.borderColor = '#ff6b6b';
         input.value = '';
-        
-        // Генерируем новый пример
         setTimeout(() => {
             generateCaptcha();
             error.textContent = '';
@@ -286,28 +279,20 @@ function checkCaptcha() {
 
 // Проверка при загрузке страницы
 window.addEventListener('load', () => {
-    const captchaPassed = localStorage.getItem('captcha_passed');
-    const captchaTime = localStorage.getItem('captcha_time');
-    const overlay = document.getElementById('captcha-overlay');
-    
-    // Капча действительна 24 часа
-    const validTime = 24 * 60 * 60 * 1000;
-    const now = Date.now();
-    
-    if (captchaPassed === 'true' && captchaTime && (now - parseInt(captchaTime)) < validTime) {
-        // Капча уже пройдена и еще действительна
-        overlay.classList.add('hidden');
-    } else {
-        // Показываем капчу
-        generateCaptcha();
-        
-        // Обработка Enter
-        document.getElementById('captcha-input').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                checkCaptcha();
-            }
-        });
-    }
+    generateCaptcha();
+
+    document.getElementById('captcha-input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            checkCaptcha();
+        }
+    });
+
+    document.getElementById('captcha-button').addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        checkCaptcha();
+    });
 });
 
 // Добавляем анимацию fadeOut
